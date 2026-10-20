@@ -1,0 +1,7 @@
+.page {
+  display: grid;
+  gap: 20px;
+
+  section { padding: 24px; background: white; border-radius: 12px; }
+  h1, h2 { margin-top: 0; }
+}
