@@ -1,1 +1,1 @@
-"""Implement domain repository Protocols here when persistence is needed."""
+"""SQLAlchemy repository for the game store."""
