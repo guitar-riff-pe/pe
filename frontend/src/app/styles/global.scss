@@ -1,0 +1,9 @@
+$background: #f3f5f8;
+$text: #172033;
+
+* { box-sizing: border-box; }
+body { margin: 0; background: $background; color: $text; font-family: system-ui, sans-serif; }
+main { max-width: 800px; margin: 64px auto; padding: 24px; }
+button { cursor: pointer; font: inherit; padding: 8px 16px; }
+button:disabled { cursor: wait; }
+a { color: #354acc; }
