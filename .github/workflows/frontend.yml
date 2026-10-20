@@ -1,0 +1,34 @@
+name: Frontend
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, FSD, tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ESLint and FSD architecture
+        run: pnpm lint
+      - name: Test FSD enforcement
+        run: pnpm test:frontend
+      - name: Production build and route generation
+        run: pnpm build
+      - name: TypeScript
+        run: pnpm typecheck
