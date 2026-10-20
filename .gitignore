@@ -1,0 +1,17 @@
+node_modules/
+.pnpm-store/
+dist/
+.output/
+.tanstack/
+.vite/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+coverage/
+frontend/src/app/routeTree.gen.ts

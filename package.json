@@ -1,0 +1,17 @@
+{
+  "name": "pe-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.14.0",
+  "engines": { "node": ">=22.18.0" },
+  "scripts": {
+    "dev": "pnpm --filter @pe/frontend dev",
+    "dev:backend": "uv run --project backend uvicorn app.main:app --app-dir backend/src --reload --port 8000",
+    "build": "pnpm --filter @pe/frontend build",
+    "typecheck": "pnpm --filter @pe/frontend typecheck",
+    "lint": "pnpm --filter @pe/frontend lint",
+    "lint:fsd": "pnpm --filter @pe/frontend lint:fsd",
+    "lint:backend": "uv run --project backend ruff check backend",
+    "test:backend": "uv run --project backend pytest backend/tests",
+    "test:frontend": "pnpm --filter @pe/frontend test"
+  }
+}
