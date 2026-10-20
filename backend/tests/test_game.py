@@ -167,19 +167,19 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
     join(client, other, str(room["code"]))
     loops = client.get("/api/v1/loops", headers=host)
     assert loops.status_code == 200
-    assert {item["bars"] for item in loops.json()} == {4, 8}
+    assert {item["bars"] for item in loops.json()} == {4, 6, 8, 16}
 
-    started = start(client, host, str(room["id"]), "groove-120-8")
-    assert started["bpm"] == 120
+    started = start(client, host, str(room["id"]), "blast-155-8")
+    assert started["bpm"] == 155
     assert started["bars"] == 8
     assert started["stage"] == "composing"
-    assert started["loop_id"] == "groove-120-8"
+    assert started["loop_id"] == "blast-155-8"
     assert started["riffs"] is None
 
     other_view = client.get(f"/api/v1/rounds/{started['id']}", headers=other)
     assert other_view.status_code == 200
     assert other_view.json()["composing_ends_at"] == started["composing_ends_at"]
-    assert other_view.json()["bpm"] == 120
+    assert other_view.json()["bpm"] == 155
     assert other_view.json()["server_now"] == "2026-10-20T15:00:00Z"
 
     save(client, host, str(started["id"]), pitch="G#1", timbre="distortion", duration=2)
@@ -277,8 +277,8 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
     nxt = start(client, host, str(room["id"]))
     assert nxt["number"] == 2
     assert nxt["stage"] == "composing"
-    assert nxt["loop_id"] == "groove-140-4"
-    assert nxt["bars"] == 4
+    assert nxt["loop_id"] == "blast-155-8"
+    assert nxt["bars"] == 8
 
 
 def test_join_is_closed_during_a_round_and_host_role_moves_on(
