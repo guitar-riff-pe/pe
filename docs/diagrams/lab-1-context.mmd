@@ -1,0 +1,10 @@
+flowchart LR
+    host["Хост / участник"] --> browser["Браузер: React + TanStack Start\nКаркас существует"]
+    player["Участник"] --> browser
+    browser --> ssr["Node.js / Nitro: SSR\nКаркас существует"]
+    browser --> api["FastAPI: /api/v1\nСейчас только health"]
+    ssr --> api
+    browser --> local["IndexedDB / Dexie\nСейчас демонстрационная заметка"]
+    browser -. "планируется" .-> audio["Piano Roll + Tone.js\nГитарные WAV и барабанные лупы"]
+    api -. "подключение планируется" .-> pg[("PostgreSQL\nКонтейнер настроен")]
+    api -. "подключение планируется" .-> redis[("Redis\nКонтейнер настроен")]
