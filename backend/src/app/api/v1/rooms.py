@@ -1,22 +1,43 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.api.dependencies import Services, get_current_player, get_services
 from app.domain.models import Player
-from app.schemas.room import JoinIn, RoomOut, StartRoundIn, room_out
+from app.schemas.room import CreateRoomIn, JoinIn, RoomOut, StartRoundIn, room_out
 from app.schemas.round import RoundOut, round_out
 
 router = APIRouter(prefix="/rooms", tags=["rooms"])
+
+
+@router.get("", response_model=list[RoomOut])
+def list_public_rooms(
+    services: Annotated[Services, Depends(get_services)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 100,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> list[RoomOut]:
+    return [room_out(item) for item in services.room.list_public(limit=limit, offset=offset)]
 
 
 @router.post("", response_model=RoomOut, status_code=201)
 def create_room(
     player: Annotated[Player, Depends(get_current_player)],
     services: Annotated[Services, Depends(get_services)],
+    payload: CreateRoomIn | None = None,
 ) -> RoomOut:
-    return room_out(services.room.create(player))
+    if payload is None:
+        return room_out(services.room.create(player))
+    return room_out(
+        services.room.create(
+            player,
+            payload.name,
+            payload.visibility,
+            payload.capacity,
+            payload.bars,
+            payload.style,
+        )
+    )
 
 
 @router.post("/join", response_model=RoomOut)

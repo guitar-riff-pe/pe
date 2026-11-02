@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     compose_seconds: int = Field(default=300, ge=1)
     vote_seconds: int = Field(default=300, ge=1)
     password_iterations: int = Field(default=210_000, ge=1)
+    reset_ttl_seconds: int = Field(default=1800, ge=60)
+    frontend_reset_url: str = "http://localhost:3000/reset-password"
+    smtp_host: str | None = None
+    smtp_port: int = Field(default=587, ge=1, le=65535)
+    smtp_from: str | None = None
+    smtp_username: str | None = None
+    smtp_password: str | None = None
 
 
 @lru_cache

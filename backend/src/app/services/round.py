@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from uuid import UUID, uuid4
 
-from app.domain.catalog import default_loop, get_loop
+from app.domain.catalog import default_loop_for_bars, get_loop
 from app.domain.errors import conflict, forbidden, invalid
 from app.domain.models import Player, Round
 from app.domain.store import Store, Tx
@@ -33,11 +33,13 @@ class RoundService:
 
     def start(self, player: Player, room_id: UUID, loop_id: str | None) -> RoundView:
         now = self._clock.now()
-        loop = default_loop() if loop_id is None else get_loop(loop_id)
-        if loop is None:
-            raise invalid("Такого барабанного лупа нет")
         with self._store.transaction() as tx:
             room = require_room_member(tx, room_id, player.id)
+            loop = default_loop_for_bars(room.bars) if loop_id is None else get_loop(loop_id)
+            if loop is None:
+                raise invalid("Такого барабанного лупа нет")
+            if room.bars is not None and loop.bars != room.bars:
+                raise invalid("Длина лупа должна совпадать с настройкой комнаты")
             if room.host_id != player.id:
                 raise forbidden("Запустить раунд может только хост")
             if len(tx.list_members(room.id)) < 2:

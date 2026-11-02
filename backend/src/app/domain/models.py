@@ -22,6 +22,7 @@ class Player:
 class Account:
     id: UUID
     username: str
+    email: str | None
     password_hash: str
     created_at: datetime
 
@@ -32,6 +33,12 @@ class Room:
     code: str
     host_id: UUID
     created_at: datetime
+    name: str = ""
+    visibility: str = "public"
+    capacity: int = 6
+    bars: int | None = None
+    style: str = "Любой стиль"
+    closed_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)

@@ -33,6 +33,12 @@ class RoomView:
     stage: str
     current_round_id: UUID | None
     members: tuple[MemberView, ...]
+    name: str = ""
+    visibility: str = "public"
+    capacity: int = 6
+    bars: int | None = None
+    style: str = "Любой стиль"
+    bpm: int = 120
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +73,29 @@ class RoundView:
     riffs: tuple[RiffView, ...] | None
     your_vote_riff_id: UUID | None
     winner_ids: tuple[UUID, ...] | None
+
+
+@dataclass(frozen=True, slots=True)
+class ProfileBattleView:
+    id: UUID
+    title: str
+    date: datetime
+    place: int
+    votes: int
+
+
+@dataclass(frozen=True, slots=True)
+class ProfileView:
+    name: str
+    handle: str
+    joined: datetime
+    battles: int
+    wins: int
+    votes: int
+    weekly_battles: tuple[int, ...]
+    week_starts: tuple[str, ...]
+    best_round: ProfileBattleView | None
+    history: tuple[ProfileBattleView, ...]
 
 
 def player_view(player: Player) -> PlayerView:

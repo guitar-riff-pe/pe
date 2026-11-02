@@ -9,6 +9,7 @@ from app.api.router import api_router
 from app.core.config import Settings, get_settings
 from app.domain.errors import AppError
 from app.domain.store import SessionStore, Store
+from app.infrastructure.mail import Mailer, SmtpMailer
 from app.infrastructure.repositories.sql import SqlStore
 from app.infrastructure.sessions import RedisSessionStore
 from app.services.clock import Clock, SystemClock
@@ -27,6 +28,7 @@ def create_app(
     store: Store | None = None,
     sessions: SessionStore | None = None,
     clock: Clock | None = None,
+    mailer: Mailer | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     application = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=_lifespan)
@@ -36,6 +38,13 @@ def create_app(
         sessions if sessions is not None else RedisSessionStore(settings.redis_url)
     )
     application.state.clock = clock or SystemClock()
+    application.state.mailer = mailer or SmtpMailer(
+        settings.smtp_host,
+        settings.smtp_port,
+        settings.smtp_from,
+        settings.smtp_username,
+        settings.smtp_password,
+    )
     application.add_exception_handler(AppError, app_error_handler)
     application.add_middleware(
         CORSMiddleware,

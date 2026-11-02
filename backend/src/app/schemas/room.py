@@ -1,9 +1,22 @@
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.domain.views import RoomView
+
+
+class CreateRoomIn(BaseModel):
+    name: str = Field(min_length=3, max_length=40)
+    visibility: Literal["public", "private"] = "public"
+    capacity: int = Field(default=4, ge=2, le=6)
+    bars: Literal[4, 8] = 4
+    style: Literal["Rock", "Metal", "Indie", "Любой стиль"] = "Любой стиль"
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def normalize_name(cls, value: object) -> object:
+        return value.strip() if isinstance(value, str) else value
 
 
 class JoinIn(BaseModel):
@@ -27,6 +40,14 @@ class RoomOut(BaseModel):
     stage: Literal["lobby", "composing", "voting", "results"]
     current_round_id: UUID | None
     members: list[MemberOut]
+    name: str
+    visibility: Literal["public", "private"]
+    capacity: int
+    bars: int | None
+    style: str
+    bpm: int
+    players: int
+    status: Literal["waiting", "playing"]
 
 
 def room_out(view: RoomView) -> RoomOut:
@@ -49,4 +70,12 @@ def room_out(view: RoomView) -> RoomOut:
             MemberOut(id=member.id, nickname=member.nickname, is_host=member.is_host)
             for member in view.members
         ],
+        name=view.name,
+        visibility="private" if view.visibility == "private" else "public",
+        capacity=view.capacity,
+        bars=view.bars,
+        style=view.style,
+        bpm=view.bpm,
+        players=len(view.members),
+        status="playing" if view.stage in {"composing", "voting"} else "waiting",
     )

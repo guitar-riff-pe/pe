@@ -14,6 +14,7 @@ class AccountRow(Base):
 
     id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True)
     username: Mapped[str] = mapped_column(String(32), unique=True)
+    email: Mapped[str | None] = mapped_column(String(320), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
@@ -29,6 +30,14 @@ class PlayerRow(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+class PasswordResetRow(Base):
+    __tablename__ = "password_resets"
+
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    account_id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("accounts.id"))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class RoomRow(Base):
     __tablename__ = "rooms"
 
@@ -36,6 +45,12 @@ class RoomRow(Base):
     code: Mapped[str] = mapped_column(String(8), unique=True)
     host_id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("players.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    name: Mapped[str | None] = mapped_column(String(40))
+    visibility: Mapped[str | None] = mapped_column(String(7))
+    capacity: Mapped[int | None] = mapped_column(Integer)
+    bars: Mapped[int | None] = mapped_column(Integer)
+    style: Mapped[str | None] = mapped_column(String(32))
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class MembershipRow(Base):

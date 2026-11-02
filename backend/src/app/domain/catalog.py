@@ -87,3 +87,9 @@ def get_loop(loop_id: str) -> DrumLoop | None:
 
 def default_loop() -> DrumLoop:
     return LOOPS[0]
+
+
+def default_loop_for_bars(bars: int | None) -> DrumLoop:
+    if bars is None:
+        return default_loop()
+    return next((item for item in LOOPS if item.bars == bars), default_loop())

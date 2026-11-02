@@ -14,10 +14,12 @@ from sqlalchemy.pool import StaticPool
 from app.domain.errors import conflict, unavailable
 from app.domain.models import Account, Membership, Note, Player, Riff, Room, Round, Vote
 from app.domain.time import utc
+from app.infrastructure.migrations import migrate_existing_tables
 from app.infrastructure.orm import (
     AccountRow,
     Base,
     MembershipRow,
+    PasswordResetRow,
     PlayerRow,
     RiffRow,
     RoomRow,
@@ -45,6 +47,7 @@ class SqlStore:
             return
         engine = self._create_engine()
         try:
+            migrate_existing_tables(engine)
             Base.metadata.create_all(engine)
         except SQLAlchemyError as exc:
             engine.dispose()
@@ -95,6 +98,7 @@ class SqlTx:
             AccountRow(
                 id=account.id,
                 username=account.username,
+                email=account.email,
                 password_hash=account.password_hash,
                 created_at=account.created_at,
             )
@@ -104,6 +108,51 @@ class SqlTx:
     def get_account_by_username(self, username: str) -> Account | None:
         row = self._session.scalar(select(AccountRow).where(AccountRow.username == username))
         return None if row is None else _account(row)
+
+    def get_account_by_email(self, email: str) -> Account | None:
+        row = self._session.scalar(select(AccountRow).where(AccountRow.email == email))
+        return None if row is None else _account(row)
+
+    def get_account_by_id(self, account_id: UUID) -> Account | None:
+        row = self._session.get(AccountRow, account_id)
+        return None if row is None else _account(row)
+
+    def update_account_password(self, account_id: UUID, password_hash: str) -> None:
+        row = self._session.get(AccountRow, account_id)
+        if row is not None:
+            row.password_hash = password_hash
+
+    def add_password_reset(self, token_hash: str, account_id: UUID, expires_at: datetime) -> None:
+        self._session.execute(
+            delete(PasswordResetRow).where(PasswordResetRow.account_id == account_id)
+        )
+        self._session.add(
+            PasswordResetRow(
+                token_hash=token_hash,
+                account_id=account_id,
+                expires_at=expires_at,
+            )
+        )
+
+    def redeem_password_reset(self, token_hash: str, now: datetime) -> UUID | None:
+        row = self._session.scalar(
+            select(PasswordResetRow)
+            .where(PasswordResetRow.token_hash == token_hash)
+            .with_for_update()
+        )
+        if row is None:
+            return None
+        account_id = row.account_id if utc(row.expires_at) > now else None
+        self._session.delete(row)
+        return account_id
+
+    def update_profile(self, player_id: UUID, account_id: UUID, name: str, handle: str) -> None:
+        player = self._session.get(PlayerRow, player_id)
+        account = self._session.get(AccountRow, account_id)
+        if player is not None and account is not None:
+            player.nickname = name
+            account.username = handle
+            self._flush_unique("Такое имя пользователя уже занято")
 
     def add_player(self, player: Player, created_at: datetime) -> None:
         self._session.add(
@@ -132,7 +181,18 @@ class SqlTx:
 
     def add_room(self, room: Room) -> None:
         self._session.add(
-            RoomRow(id=room.id, code=room.code, host_id=room.host_id, created_at=room.created_at)
+            RoomRow(
+                id=room.id,
+                code=room.code,
+                host_id=room.host_id,
+                created_at=room.created_at,
+                name=room.name,
+                visibility=room.visibility,
+                capacity=room.capacity,
+                bars=room.bars,
+                style=room.style,
+                closed_at=room.closed_at,
+            )
         )
         self._flush_unique("Не удалось создать комнату")
 
@@ -144,21 +204,32 @@ class SqlTx:
         row = self._session.scalar(select(RoomRow).where(RoomRow.code == code))
         return None if row is None else _room(row)
 
+    def lock_room_by_code(self, code: str) -> Room | None:
+        row = self._session.scalar(select(RoomRow).where(RoomRow.code == code).with_for_update())
+        return None if row is None else _room(row)
+
+    def list_public_rooms(self, limit: int, offset: int) -> list[Room]:
+        rows = self._session.scalars(
+            select(RoomRow)
+            .where(
+                RoomRow.closed_at.is_(None),
+                (RoomRow.visibility == "public") | RoomRow.visibility.is_(None),
+            )
+            .order_by(RoomRow.created_at.desc(), RoomRow.id)
+            .offset(offset)
+            .limit(limit)
+        )
+        return [_room(row) for row in rows]
+
     def set_host(self, room_id: UUID, host_id: UUID) -> None:
         row = self._session.get(RoomRow, room_id)
         if row is not None:
             row.host_id = host_id
 
-    def delete_room(self, room_id: UUID) -> None:
-        round_ids = list(
-            self._session.scalars(select(RoundRow.id).where(RoundRow.room_id == room_id))
-        )
-        if round_ids:
-            self._session.execute(delete(VoteRow).where(VoteRow.round_id.in_(round_ids)))
-            self._session.execute(delete(RiffRow).where(RiffRow.round_id.in_(round_ids)))
-            self._session.execute(delete(RoundRow).where(RoundRow.id.in_(round_ids)))
-        self._session.execute(delete(MembershipRow).where(MembershipRow.room_id == room_id))
-        self._session.execute(delete(RoomRow).where(RoomRow.id == room_id))
+    def close_room(self, room_id: UUID, closed_at: datetime) -> None:
+        row = self._session.get(RoomRow, room_id)
+        if row is not None:
+            row.closed_at = closed_at
 
     def add_membership(self, room_id: UUID, player_id: UUID, joined_at: datetime) -> None:
         last = self._session.scalar(select(func.max(MembershipRow.position)))
@@ -296,6 +367,18 @@ class SqlTx:
         )
         return None if row is None else _vote(row)
 
+    def completed_riffs_by_author(
+        self, player_id: UUID, now: datetime
+    ) -> list[tuple[Room, Round, Riff]]:
+        rows = self._session.execute(
+            select(RoomRow, RoundRow, RiffRow)
+            .join(RoundRow, RoundRow.room_id == RoomRow.id)
+            .join(RiffRow, RiffRow.round_id == RoundRow.id)
+            .where(RiffRow.author_id == player_id, RoundRow.voting_ends_at <= now)
+            .order_by(RoundRow.voting_ends_at.desc(), RoundRow.id)
+        )
+        return [(_room(room), _round(round_item), _riff(riff)) for room, round_item, riff in rows]
+
     def _flush_unique(self, message: str) -> None:
         try:
             self._session.flush()
@@ -307,6 +390,7 @@ def _account(row: AccountRow) -> Account:
     return Account(
         id=row.id,
         username=row.username,
+        email=row.email,
         password_hash=row.password_hash,
         created_at=utc(row.created_at),
     )
@@ -317,7 +401,18 @@ def _player(row: PlayerRow) -> Player:
 
 
 def _room(row: RoomRow) -> Room:
-    return Room(id=row.id, code=row.code, host_id=row.host_id, created_at=utc(row.created_at))
+    return Room(
+        id=row.id,
+        code=row.code,
+        host_id=row.host_id,
+        created_at=utc(row.created_at),
+        name=row.name or f"Комната {row.code}",
+        visibility=row.visibility or "public",
+        capacity=row.capacity or 6,
+        bars=row.bars,
+        style=row.style or "Любой стиль",
+        closed_at=None if row.closed_at is None else utc(row.closed_at),
+    )
 
 
 def _membership(row: MembershipRow, nickname: str) -> Membership:
