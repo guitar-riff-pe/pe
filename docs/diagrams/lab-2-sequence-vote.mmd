@@ -3,13 +3,14 @@ sequenceDiagram
     participant UI as Интерфейс
     participant API as API голосования
     participant DB as PostgreSQL
-    P->>UI: Выбрать анонимный рифф
+    P->>UI: Выбрать рифф без подписи автора
     UI->>API: POST /rounds/{id}/votes (riff_id)
-    API->>DB: Проверить стадию, автора и прежний голос
+    API->>DB: Проверить стадию, автора и прежний голос, свой рифф не обязателен
     alt Чужой рифф, голосов ещё нет
       API->>DB: Сохранить голос
       API-->>UI: 201, riff_id
       UI-->>P: Голос принят
+      Note over UI,DB: Даже если все проголосовали, этап идёт до voting_ends_at
     else Собственный рифф
       API-->>UI: 403, «Нельзя голосовать за свой рифф»
       UI-->>P: Показать ошибку, голос не записан

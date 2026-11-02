@@ -136,7 +136,7 @@ def test_guest_register_login_and_logout(client: TestClient) -> None:
     assert client.get("/api/v1/session/me").status_code == 401
 
 
-def test_room_is_shared_and_round_needs_two_players(client: TestClient) -> None:
+def test_room_is_shared_and_round_needs_three_players(client: TestClient) -> None:
     host = guest(client, "Хост")
     other = guest(client, "Гость")
     room = create_room(client, host)
@@ -151,6 +151,10 @@ def test_room_is_shared_and_round_needs_two_players(client: TestClient) -> None:
     assert seen_by_host.status_code == 200
     assert [member["nickname"] for member in seen_by_host.json()["members"]] == ["Хост", "Гость"]
 
+    still_too_few = client.post(f"/api/v1/rooms/{room['id']}/rounds", headers=host, json={})
+    assert still_too_few.status_code == 409
+    assert still_too_few.json() == {"code": "conflict", "detail": "Нужны минимум три игрока"}
+
     denied = client.post(f"/api/v1/rooms/{room['id']}/rounds", headers=other, json={})
     assert denied.status_code == 403
 
@@ -163,8 +167,10 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
 ) -> None:
     host = guest(client, "Хост")
     other = guest(client, "СкрытыйАвтор")
+    third = guest(client, "Третий")
     room = create_room(client, host)
     join(client, other, str(room["code"]))
+    join(client, third, str(room["code"]))
     loops = client.get("/api/v1/loops", headers=host)
     assert loops.status_code == 200
     assert {item["bars"] for item in loops.json()} == {4, 6, 8, 16}
@@ -287,8 +293,10 @@ def test_join_is_closed_during_a_round_and_host_role_moves_on(
     host = guest(client, "Хост")
     other = guest(client, "Второй")
     late = guest(client, "Третий")
+    fourth = guest(client, "Четвёртый")
     room = create_room(client, host)
     join(client, other, str(room["code"]))
+    join(client, fourth, str(room["code"]))
     started = start(client, host, str(room["id"]))
     blocked = client.post("/api/v1/rooms/join", headers=late, json={"code": room["code"]})
     assert blocked.status_code == 409
@@ -308,7 +316,11 @@ def test_join_is_closed_during_a_round_and_host_role_moves_on(
         member["id"] for member in transferred["members"] if member["nickname"] == "Второй"
     )
     assert transferred["stage"] == "results"
-    assert [member["nickname"] for member in transferred["members"]] == ["Второй", "Третий"]
+    assert [member["nickname"] for member in transferred["members"]] == [
+        "Второй",
+        "Четвёртый",
+        "Третий",
+    ]
 
     nxt = start(client, other, str(room["id"]))
     assert nxt["number"] == 2

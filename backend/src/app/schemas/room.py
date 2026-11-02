@@ -9,7 +9,7 @@ from app.domain.views import RoomView
 class CreateRoomIn(BaseModel):
     name: str = Field(min_length=3, max_length=40)
     visibility: Literal["public", "private"] = "public"
-    capacity: int = Field(default=4, ge=2, le=6)
+    capacity: int = Field(default=4, ge=3, le=6)
     bars: Literal[4, 8] = 4
     style: Literal["Rock", "Metal", "Indie", "Любой стиль"] = "Любой стиль"
 

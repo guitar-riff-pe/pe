@@ -42,8 +42,8 @@ class RoundService:
                 raise invalid("Длина лупа должна совпадать с настройкой комнаты")
             if room.host_id != player.id:
                 raise forbidden("Запустить раунд может только хост")
-            if len(tx.list_members(room.id)) < 2:
-                raise conflict("Нужны минимум два игрока")
+            if len(tx.list_members(room.id)) < 3:
+                raise conflict("Нужны минимум три игрока")
             latest = tx.latest_round(room.id)
             if latest is not None and stage_at(latest, now) != "results":
                 raise conflict("Раунд ещё не закончен")

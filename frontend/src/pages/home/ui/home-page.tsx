@@ -21,7 +21,7 @@ export function HomePage() {
             <h1 id="home-title">Создавай риффы.<br />Соревнуйся.<br /><span>Будь услышан.</span></h1>
             <p className={styles.lead}>Один бит. Разные характеры.<br />Сочини свою партию и забери голоса друзей.</p>
             <Link className={styles.primaryLink} to="/rooms">Найти комнату <span aria-hidden="true">→</span></Link>
-            <p className={styles.caption}>Без регистрации · от 2 игроков</p>
+            <p className={styles.caption}>Без регистрации · от 3 игроков</p>
           </div>
           <div className={styles.heroVisual}><RiffPreview /></div>
         </section>

@@ -1,11 +1,13 @@
 stateDiagram-v2
-    [*] --> Composing: хост запускает при 2+ участниках
-    Composing: Сочинение
+    [*] --> Composing: хост запускает при 3+ участниках
+    Composing: Сочинение — 5 минут
     Composing: рифф можно сохранять
     Composing --> Voting: наступило composing_ends_at
-    Voting: Голосование
-    Voting: авторы скрыты; голос один
+    Voting: Голосование — 5 минут
+    Voting: имена авторов скрыты, голос один
+    Voting: все проголосовали — этап продолжается
     Voting --> Results: наступило voting_ends_at
     Results: Результаты
     Results: авторы и победители открыты
+    Results: при нуле голосов побеждают все риффы
     Results --> [*]

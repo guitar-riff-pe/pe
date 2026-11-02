@@ -157,13 +157,20 @@ def test_room_settings_public_list_capacity_and_archive() -> None:
         host = auth(client, "Хост")
         other = auth(client, "Гость")
         extra = auth(client, "Третий")
+        overflow = auth(client, "Четвёртый")
+        too_small = client.post(
+            "/api/v1/rooms",
+            headers=host,
+            json={"name": "Too Small", "capacity": 2},
+        )
+        assert too_small.status_code == 422
         created = client.post(
             "/api/v1/rooms",
             headers=host,
             json={
                 "name": "  Midnight Garage  ",
                 "visibility": "public",
-                "capacity": 2,
+                "capacity": 3,
                 "bars": 8,
                 "style": "Metal",
             },
@@ -172,7 +179,7 @@ def test_room_settings_public_list_capacity_and_archive() -> None:
         room = created.json()
         assert (room["name"], room["capacity"], room["bars"], room["style"]) == (
             "Midnight Garage",
-            2,
+            3,
             8,
             "Metal",
         )
@@ -181,10 +188,14 @@ def test_room_settings_public_list_capacity_and_archive() -> None:
         assert listed[0]["players"] == 1 and listed[0]["status"] == "waiting"
         joined = client.post("/api/v1/rooms/join", headers=other, json={"code": room["code"]})
         assert joined.status_code == 200, joined.text
+        second_joined = client.post(
+            "/api/v1/rooms/join", headers=extra, json={"code": room["code"]}
+        )
+        assert second_joined.status_code == 200, second_joined.text
         assert (
             client.post(
                 "/api/v1/rooms/join",
-                headers=extra,
+                headers=overflow,
                 json={
                     "code": room["code"],
                 },
@@ -204,6 +215,10 @@ def test_room_settings_public_list_capacity_and_archive() -> None:
         assert started.json()["bars"] == 8
         assert client.get("/api/v1/rooms").json()[0]["status"] == "playing"
         clock.advance(600)
+        assert (
+            client.delete(f"/api/v1/rooms/{room['id']}/membership", headers=extra).status_code
+            == 204
+        )
         assert (
             client.delete(f"/api/v1/rooms/{room['id']}/membership", headers=other).status_code
             == 204
@@ -238,6 +253,7 @@ def test_private_room_and_profile_history_survives_closure() -> None:
         assert registered.status_code == 201, registered.text
         host = {"Authorization": f"Bearer {registered.json()['token']}"}
         other = auth(client, "Гость")
+        third = auth(client, "Третий")
         room_response = client.post(
             "/api/v1/rooms",
             headers=host,
@@ -258,6 +274,12 @@ def test_private_room_and_profile_history_survives_closure() -> None:
                 json={
                     "code": room["code"],
                 },
+            ).status_code
+            == 200
+        )
+        assert (
+            client.post(
+                "/api/v1/rooms/join", headers=third, json={"code": room["code"]}
             ).status_code
             == 200
         )

@@ -12,7 +12,6 @@ export const riffLengthOptions = [
 ] as const
 
 export const playerOptions = [
-  { value: '2', label: '2 игрока' },
   { value: '3', label: '3 игрока' },
   { value: '4', label: '4 игрока' },
   { value: '5', label: '5 игроков' },

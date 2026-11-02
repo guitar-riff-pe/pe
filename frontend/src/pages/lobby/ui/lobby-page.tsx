@@ -17,7 +17,7 @@ export function LobbyPage() {
 
         <header className={styles.intro}>
           <h1>{demoLobby.name}</h1>
-          <p>{playersCount} из {demoLobby.capacity} игроков · можно начать от 2 игроков</p>
+          <p>{playersCount} из {demoLobby.capacity} игроков · можно начать от 3 игроков</p>
         </header>
 
         <div className={styles.layout}>

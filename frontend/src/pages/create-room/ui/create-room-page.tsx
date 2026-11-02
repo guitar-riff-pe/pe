@@ -4,7 +4,7 @@ import { Surface } from '@shared/ui'
 import styles from './create-room-page.module.scss'
 
 const rules = [
-  'От 2 игроков для старта',
+  'От 3 игроков для старта',
   '5 минут на создание риффа',
   'Общие барабаны и темп',
   'Анонимное голосование',
