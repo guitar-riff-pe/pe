@@ -21,10 +21,10 @@ test('FSD configuration enforces boundaries and public APIs', async (t) => {
     await mkdir(path.dirname(target), { recursive: true })
     await writeFile(target, content)
   }
-  const store = 'src/features/counter/model/store.ts'
+  const store = 'src/features/sample/model/store.ts'
   const page = 'src/pages/home/ui/page.ts'
   const baselineStore = 'export const state = 0\nexport type State = number\n'
-  const baselinePage = "import { state } from '@features/counter'\nexport const Home = state\n"
+  const baselinePage = "import { state } from '@features/sample'\nexport const Home = state\n"
 
   try {
     const configUrl = new URL('../steiger.config.js', import.meta.url).href
@@ -33,7 +33,7 @@ test('FSD configuration enforces boundaries and public APIs', async (t) => {
     await write('package.json', '{"type":"module"}')
     await write('src/app/routes/index.ts', "export { Home } from '@pages/home'\n")
     await write('src/pages/home/index.ts', "export { Home } from './ui/page'\n")
-    await write('src/features/counter/index.ts', "export { state, type State } from './model/store'\n")
+    await write('src/features/sample/index.ts', "export { state, type State } from './model/store'\n")
     await write('src/features/reset/index.ts', "export { reset } from './model/reset'\n")
     await write('src/features/reset/model/reset.ts', 'export const reset = 0\n')
     await write(store, baselineStore)
@@ -51,9 +51,9 @@ test('FSD configuration enforces boundaries and public APIs', async (t) => {
       ['upper layer via relative path', store, "import { Home } from '../../../pages/home'\n", 'fsd/forbidden-imports'],
       ['sibling slice via alias', store, "import { reset } from '@features/reset'\n", 'fsd/forbidden-imports'],
       ['sibling slice via relative path', store, "import { reset } from '../../reset'\n", 'fsd/forbidden-imports'],
-      ['deep alias import', page, "import { state } from '@features/counter/model/store'\n", 'fsd/no-public-api-sidestep'],
-      ['deep relative import', page, "import { state } from '../../../features/counter/model/store'\n", 'fsd/no-public-api-sidestep'],
-      ['deep type import', page, "import type { State } from '@features/counter/model/store'\n", 'fsd/no-public-api-sidestep'],
+      ['deep alias import', page, "import { state } from '@features/sample/model/store'\n", 'fsd/no-public-api-sidestep'],
+      ['deep relative import', page, "import { state } from '../../../features/sample/model/store'\n", 'fsd/no-public-api-sidestep'],
+      ['deep type import', page, "import type { State } from '@features/sample/model/store'\n", 'fsd/no-public-api-sidestep'],
     ]
     for (const [name, file, content, rule] of violations) {
       await t.test(`rejects ${name}`, async () => {
@@ -85,7 +85,7 @@ test('FSD configuration enforces boundaries and public APIs', async (t) => {
     })
 
     await t.test('rejects layer-wide barrel exports', async () => {
-      await write('src/features/index.ts', "export { state } from './counter'\n")
+      await write('src/features/index.ts', "export { state } from './sample'\n")
       await assert.rejects(lint(), (error) => {
         assert.equal(error.code, 1)
         assert.ok(`${error.stdout}${error.stderr}`.includes('fsd/no-layer-public-api'), error.stdout)

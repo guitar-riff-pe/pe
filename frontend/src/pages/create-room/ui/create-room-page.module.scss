@@ -1,0 +1,28 @@
+@use '@mixins' as mixins;
+
+.page { width: min(100% - 80px, 1440px); max-width: none; padding: 36px 0 80px; }
+.intro { margin-bottom: 46px; }
+.eyebrow { margin: 0 0 20px; color: var(--color-danger); font-size: 13px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.intro h1 { margin: 0; font-size: clamp(36px, 4vw, 46px); line-height: 1.2; }
+.intro > p:last-child { margin: 10px 0 0; color: var(--color-text-secondary); font-size: 16px; }
+.content { display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 526px); justify-content: space-between; gap: 48px; padding: 0 32px; }
+.rules { align-self: start; min-height: 410px; padding: 30px 32px; }
+.rules h2 { margin: 0 0 40px; font-size: 24px; }
+.rules ol { display: grid; gap: 34px; margin: 0; padding: 0; list-style: none; }
+.rules li { display: flex; gap: 36px; align-items: center; font-size: 16px; }
+.rules li span { min-width: 20px; color: var(--color-danger); font-size: 14px; font-weight: var(--font-weight-bold); }
+
+@include mixins.tablet {
+  .content { grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); gap: 32px; padding: 0; }
+  .rules { padding: 24px; }
+  .rules li { gap: 18px; }
+}
+@include mixins.mobile {
+  .page { width: calc(100% - 40px); padding: 28px 0 118px; }
+  .intro { margin-bottom: 42px; }
+  .eyebrow { display: none; }
+  .intro h1 { font-size: 30px; }
+  .intro > p:last-child { max-width: 330px; font-size: 14px; line-height: 1.35; }
+  .content { display: block; padding: 0; }
+  .rules { display: none; }
+}

@@ -1,0 +1,7 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { line-height: 1.15; -webkit-text-size-adjust: 100%; tab-size: 4; }
+body { margin: 0; }
+button, input, optgroup, select, textarea { margin: 0; font: inherit; color: inherit; }
+img, svg, video, canvas { max-width: 100%; vertical-align: middle; }
+img, video { height: auto; }
+[hidden] { display: none; }

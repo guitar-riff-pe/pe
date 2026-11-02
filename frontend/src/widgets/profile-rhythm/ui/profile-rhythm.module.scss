@@ -1,0 +1,24 @@
+@use '@mixins' as mixins;
+
+.card { min-width: 0; min-height: 239px; padding: 16px 23px 9px; }
+.heading { display: flex; justify-content: space-between; }
+.heading h2 { margin: 0; font-size: 23px; }
+.heading p { margin: 2px 0 0; color: var(--color-text-secondary); font-size: 13px; }
+.heading strong { font-size: 32px; }
+.chart { display: grid; height: 151px; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 16px; align-items: end; margin-top: 2px; }
+.week { display: flex; height: 100%; flex-direction: column; align-items: center; justify-content: flex-end; }
+.count { color: var(--color-text-secondary); font-size: 12px; }
+.bar { display: block; width: min(100%, 45px); max-height: 100px; min-height: 12px; border-radius: 4px 4px 0 0; background: var(--color-profile-rhythm-bar); }
+.latest { background: var(--color-primary); }
+.label { margin-top: 14px; color: var(--color-text-secondary); font-size: 12px; }
+.months { display: none; }
+
+@include mixins.mobile {
+  .card { min-height: 212px; padding: 14px 15px 12px; }
+  .heading h2 { font-size: 20px; }
+  .heading strong { display: none; }
+  .chart { height: 114px; gap: 17px; margin-top: 12px; }
+  .count, .label { display: none; }
+  .bar { max-height: 92px; width: 20px; }
+  .months { display: flex; justify-content: space-between; margin-top: 14px; color: var(--color-text-secondary); font-size: 12px; }
+}

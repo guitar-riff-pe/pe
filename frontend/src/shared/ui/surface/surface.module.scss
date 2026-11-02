@@ -1,0 +1,13 @@
+@use '@mixins' as mixins;
+
+.surface {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.default {
+  padding: 24px;
+  @include mixins.mobile { padding: 16px; }
+}
+.compact { padding: 16px; }
+.none { padding: 0; }

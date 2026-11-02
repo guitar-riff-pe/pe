@@ -1,0 +1,5 @@
+.list { display: grid; gap: 12px; }
+
+@media (width < 768px) {
+  .list { gap: 8px; }
+}

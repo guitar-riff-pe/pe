@@ -4,7 +4,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist/**', '.output/**', '.tanstack/**', 'src/app/routeTree.gen.ts'] },
+  { ignores: ['dist/**', '.output/**', '.tanstack/**', 'storybook-static/**', 'src/app/routeTree.gen.ts'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

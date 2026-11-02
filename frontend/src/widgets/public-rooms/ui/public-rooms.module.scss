@@ -1,0 +1,18 @@
+@use '@mixins' as mixins;
+
+.section { display: grid; gap: 32px; }
+.list { display: grid; gap: 14px; }
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.25fr) minmax(80px, .8fr) minmax(100px, .7fr) 142px;
+  gap: 20px;
+  padding: 0 24px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+.empty { margin: 0; color: var(--color-text-secondary); }
+
+@include mixins.mobile { .head { display: none; } }
+@include mixins.tablet { .head { display: none; } }

@@ -1,0 +1,27 @@
+@use '@mixins' as mixins;
+
+.page { width: min(100% - 80px, 1440px); max-width: none; padding: 22px 0 80px; }
+.intro { margin-bottom: 40px; }
+.intro h1 { margin: 0; font-size: 40px; line-height: 1.2; }
+.intro p { margin: 12px 0 0; color: var(--color-text-secondary); font-size: 16px; }
+.layout { display: grid; grid-template-columns: minmax(0, 780px) minmax(0, 532px); justify-content: space-between; gap: 32px; }
+.participants { min-width: 0; }
+.participants h2 { margin: 0 0 18px; font-size: 24px; }
+.people { display: grid; gap: 16px; }
+.leave { display: inline-block; margin-top: 80px; color: var(--color-text-secondary); font-size: 14px; text-decoration: none; }
+.leave:hover { color: var(--color-text); }
+
+@include mixins.tablet {
+  .layout { grid-template-columns: minmax(0, 1fr) minmax(320px, .8fr); gap: 24px; }
+}
+@include mixins.mobile {
+  .page { width: calc(100% - 40px); padding: 20px 0 118px; }
+  .intro { margin-bottom: 24px; }
+  .intro h1 { font-size: 28px; }
+  .intro p { margin-top: 8px; font-size: 14px; }
+  .layout { display: flex; flex-direction: column; gap: 28px; }
+  .participants { order: 2; }
+  .participants h2 { display: none; }
+  .people { gap: 12px; }
+  .leave { display: none; }
+}

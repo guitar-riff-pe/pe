@@ -1,0 +1,4 @@
+@mixin ring($color: var(--color-border-strong), $offset: 1px) {
+  outline: 2px solid $color;
+  outline-offset: $offset;
+}

@@ -1,0 +1,49 @@
+@use '@mixins' as mixins;
+
+.shell {
+  min-height: 100vh;
+}
+.page {
+  width: min(100% - 80px, 1440px);
+  max-width: none;
+  margin-inline: auto;
+  padding: 36px 0 64px;
+}
+.intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 44px;
+
+}
+.createLink {
+  display: inline-flex;
+  min-width: 240px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+.createLink:hover { background: var(--color-primary-hover); color: var(--color-text-on-primary); }
+.eyebrow { margin: 0 0 20px; color: var(--color-danger); font-size: 14px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.intro h1 { margin: 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.2; }
+.lead { margin: 12px 0 0; color: var(--color-text-secondary); font-size: 16px; }
+.note { margin: 44px 0 12px; color: var(--color-text-secondary); font-size: 13px; }
+.homeLink { color: var(--color-text-secondary); font-size: 14px; text-decoration: none; }
+.homeLink:hover { color: var(--color-text); }
+
+@include mixins.mobile {
+  .page { width: calc(100% - 40px); padding: 32px 0 110px; }
+  .intro { display: grid; gap: 32px; margin-bottom: 32px; }
+  .createLink { width: 100%; }
+  .eyebrow { display: none; }
+  .intro h1 { font-size: 30px; }
+  .lead { font-size: 14px; }
+}

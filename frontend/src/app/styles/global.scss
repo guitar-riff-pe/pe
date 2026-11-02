@@ -1,9 +1,25 @@
-$background: #f3f5f8;
-$text: #172033;
+@use '../../shared/config/styles';
+@use '../../shared/config/styles/focus' as focus;
+@use '../../shared/config/styles/mixins' as mixins;
 
-* { box-sizing: border-box; }
-body { margin: 0; background: $background; color: $text; font-family: system-ui, sans-serif; }
-main { max-width: 800px; margin: 64px auto; padding: 24px; }
-button { cursor: pointer; font: inherit; padding: 8px 16px; }
-button:disabled { cursor: wait; }
-a { color: #354acc; }
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  @include mixins.stage-background;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height);
+  font-synthesis: none;
+}
+
+main {
+  width: min(100%, 1200px);
+  margin-inline: auto;
+  @include mixins.mobile { padding: 32px 20px; }
+  @include mixins.tablet { padding: 56px 32px; }
+  @include mixins.desktop { padding: 80px 24px; }
+}
+
+:where(a, button, input, textarea):focus-visible { @include focus.ring; }
+a { color: var(--color-danger); }

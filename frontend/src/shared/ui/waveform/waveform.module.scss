@@ -1,0 +1,2 @@
+.waveform { display: flex; align-items: center; gap: 2px; overflow: hidden; }
+.waveform span { flex: 1 0 2px; min-width: 2px; background: var(--waveform-color, var(--color-danger)); }

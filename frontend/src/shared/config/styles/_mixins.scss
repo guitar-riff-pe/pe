@@ -1,0 +1,15 @@
+$tablet-breakpoint: 768px;
+$desktop-breakpoint: 1200px;
+
+@mixin mobile { @media (width < $tablet-breakpoint) { @content; } }
+@mixin tablet { @media (width >= $tablet-breakpoint) and (width < $desktop-breakpoint) { @content; } }
+@mixin desktop { @media (width >= $desktop-breakpoint) { @content; } }
+
+@mixin stage-background {
+  background:
+    linear-gradient(126deg, transparent 24%, color-mix(in srgb, var(--color-stage-line) 23%, transparent) 24.05%, transparent 24.1%, transparent 74%, color-mix(in srgb, var(--color-stage-line) 20%, transparent) 74.05%, transparent 74.1%),
+    radial-gradient(ellipse 62% 52% at 88% 14%, color-mix(in srgb, var(--color-stage-red) 42%, transparent), transparent 82%),
+    radial-gradient(ellipse 70% 60% at 0% 90%, color-mix(in srgb, var(--color-stage-blue) 26%, transparent), transparent 80%),
+    var(--color-background);
+  background-attachment: fixed;
+}
