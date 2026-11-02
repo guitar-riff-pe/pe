@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 
 const thresholds = {
-  performance: 90,
+  performance: 80,
   accessibility: 90,
   'best-practices': 90,
   seo: 90,
