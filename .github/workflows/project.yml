@@ -68,7 +68,8 @@ jobs:
         id: lighthouse
         timeout-minutes: 5
         run: |
-          export CHROME_PATH="$(command -v google-chrome)"
+          CHROME_PATH="$(command -v google-chrome)"
+          export CHROME_PATH
           pnpm lighthouse
           pnpm lighthouse:check
       - name: Upload Lighthouse report
