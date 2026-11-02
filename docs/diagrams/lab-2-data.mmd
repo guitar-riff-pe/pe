@@ -1,0 +1,40 @@
+erDiagram
+    PLAYER ||--o{ ROOM : hosts
+    PLAYER }o--o{ ROOM : participates
+    ROOM ||--o{ ROUND : contains
+    PLAYER ||--o{ RIFF : authors
+    ROUND ||--o{ RIFF : includes
+    PLAYER ||--o{ VOTE : casts
+    RIFF ||--o{ VOTE : receives
+    PLAYER {
+      uuid id PK
+      string nickname
+      uuid account_id
+    }
+    ROOM {
+      uuid id PK
+      string code
+      uuid host_id FK
+      string visibility
+      int capacity
+    }
+    ROUND {
+      uuid id PK
+      uuid room_id FK
+      string loop_id
+      datetime composing_ends_at
+      datetime voting_ends_at
+    }
+    RIFF {
+      uuid id PK
+      uuid round_id FK
+      uuid author_id FK
+      string timbre
+      json notes
+    }
+    VOTE {
+      uuid id PK
+      uuid riff_id FK
+      uuid voter_id FK
+      uuid round_id FK
+    }

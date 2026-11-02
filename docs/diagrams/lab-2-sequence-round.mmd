@@ -1,0 +1,23 @@
+sequenceDiagram
+    actor H as Хост
+    participant UI as Интерфейс
+    participant API as API комнат
+    participant DB as PostgreSQL
+    H->>UI: Создать комнату (имя, доступ, места, такты)
+    UI->>API: POST /rooms
+    API->>DB: Создать комнату и членство хоста
+    DB-->>API: Комната и код
+    API-->>UI: 201, RoomOut
+    UI-->>H: Лобби и код приглашения
+    Note over H,DB: Второй игрок входит по коду (US-4)
+    H->>UI: Выбрать луп и начать раунд
+    UI->>API: POST /rooms/{id}/rounds
+    API->>DB: Проверить хоста и число участников
+    alt Два или более игрока
+      API->>DB: Сохранить раунд и дедлайны
+      API-->>UI: 201, stage=composing
+      UI-->>H: Луп и время сочинения
+    else Только один игрок
+      API-->>UI: 409, «Нужны минимум два игрока»
+      UI-->>H: Показать причину, раунд не создан
+    end

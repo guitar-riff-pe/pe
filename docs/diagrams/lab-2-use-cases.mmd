@@ -1,0 +1,14 @@
+flowchart LR
+    guest[Гость] --> u1((FR-1\nГостевой вход))
+    account[Владелец аккаунта] --> u2((FR-2\nРегистрация и вход))
+    account --> u3((FR-3\nВосстановление пароля))
+    account --> u10((FR-10\nПрофиль))
+    guest --> player[Игрок]
+    account --> player
+    player --> u4((FR-4\nНайти и войти в комнату))
+    player --> u5((FR-5\nСоздать комнату))
+    player --> u7((FR-7\nСоздать рифф))
+    player --> u8((FR-8\nПроголосовать))
+    player --> u9((FR-9\nПосмотреть результат))
+    host[Хост] --> u6((FR-6\nЗапустить раунд))
+    host --> player
