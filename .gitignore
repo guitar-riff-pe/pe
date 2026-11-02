@@ -15,3 +15,6 @@ __pycache__/
 !.env.example
 coverage/
 frontend/src/app/routeTree.gen.ts
+frontend/lighthouse-report.*
+frontend/storybook-static/
+frontend/debug-storybook.log

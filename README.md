@@ -6,10 +6,8 @@
 или зарегистрироваться и входить через аккаунт; регистрация не обязательна.
 Хост создаёт комнату и запускает раунд минимум для двух игроков.
 
-**Игровой HTTP API реализован.** Регистрация, гостевой вход, комнаты, раунды,
-сохранение риффа и голосование работают на backend. Piano Roll, Tone.js и
-музыкальные файлы на frontend ещё не подключены. Стартовая страница по-прежнему
-показывает связь с API, счётчик Zustand и запись заметки в IndexedDB.
+**Игровой HTTP API реализован.** На backend работают регистрация, гостевой вход,
+комнаты, раунды, сохранение риффа и голосование.
 
 Команда: Пинаев О.К. и Соболев Д.Р. Собственный код распространяется по
 [лицензии MIT](LICENSE); условия использования музыкальных ресурсов проверяются
@@ -47,14 +45,14 @@ python scripts/smoke-compose.py
 | Сервис | Адрес |
 | --- | --- |
 | Frontend | http://localhost:3000 |
+| Вход / регистрация | http://localhost:3000/login, http://localhost:3000/register |
 | FastAPI / Swagger UI | http://localhost:8000/docs |
 | Состояние API | http://localhost:8000/api/v1/health |
 
 Ручная проверка:
 
-1. Открыть frontend: страница загружается, статус API — `pe-backend: ok`.
-2. Нажать счётчик и «Сохранить локально»: значение увеличивается, заметка
-   записывается в IndexedDB с сообщением об успехе.
+1. Открыть frontend: главная страница загружается, доступны переходы к комнатам и входу.
+2. Открыть `/api/v1/health` на backend: ответ содержит `"status":"ok"` и `"service":"pe-backend"`.
 3. Проверить `docker compose ps`: четыре сервиса работают и имеют healthy-статус.
    Smoke-скрипт дополнительно проверяет API, SSR и клиентские ресурсы.
 
@@ -107,7 +105,6 @@ flowchart LR
     browser[Браузер] --> frontend[React / TanStack Start / Nitro]
     browser --> api[FastAPI /api/v1]
     frontend -->|SSR: внутренний HTTP API| api
-    browser --> indexeddb[(IndexedDB / Dexie)]
     api --> postgres[(PostgreSQL)]
     api --> redis[(Redis)]
 ```
@@ -164,9 +161,8 @@ import { HomePage } from '@pages/home'
 import { healthQueryOptions } from '@entities/health'
 ```
 
-Импорт `@features/counter/model/counter-store` из другого слайса обходит публичный
-API и запрещён. Для библиотек `shared/lib` и компонентов `shared/ui` допустимы
-отдельные публичные API уровнем глубже, например `@shared/lib/db`.
+Импорт `@features/filter-rooms/model/filter-rooms` из другого слайса обходит публичный
+API и запрещён. Общие компоненты импортируются через публичный API `@shared/ui`.
 
 `pnpm lint` запускает ESLint и Steiger. Steiger проверяет структуру слоёв,
 слайсов и сегментов, импорты верхних слоёв и соседних слайсов, обход публичных
@@ -179,14 +175,10 @@ API, локальность импортов и wildcard-экспорты. Он 
 | --- | --- |
 | TanStack Start / Router | SSR и файловые маршруты в `app/routes`; маршруты подключают `pages` |
 | TanStack Query | Серверные данные, кэш, загрузка и ошибки; query options рядом с сущностью |
-| Zustand | Клиентское состояние UI; серверные данные не дублируются |
-| Dexie | IndexedDB; сейчас демонстрационная заметка, без синхронизации с API |
 | SCSS | Глобальные стили в `app/styles`, локальные `*.module.scss` рядом с UI |
 
 `QueryClient` создаётся внутри `getRouter()` отдельно для каждого router/SSR-запроса,
 чтобы не смешивать пользовательские кэши. Router SSR Query переносит данные в браузер.
-Глобальный Zustand-store нельзя изменять из серверных обработчиков для хранения
-пользовательских данных. Dexie открывается лениво через `getLocalDb()` только в браузере.
 
 ### Backend: слоистая архитектура
 
@@ -214,8 +206,9 @@ Pydantic-схемы описывают транспортный контракт
 Игрок — гость или владелец аккаунта; сессия живёт в Redis и не даёт аккаунту
 дополнительных игровых прав. Рифф — JSON нот и тембр `clean` или `distortion`.
 Раунд берёт луп, BPM и число тактов из каталога и считает дедлайны на сервере.
-Связка гостя с аккаунтом посреди раунда не делается. Черновик в IndexedDB по-прежнему
-только демонстрационная заметка. Расширенные профили, рейтинги, турниры, запись
+Связка гостя с аккаунтом посреди раунда не делается. Локальное сохранение
+черновиков риффов пока не реализовано. Базовый профиль с историей и статистикой доступен
+через API. Рейтинги, турниры, запись
 живой гитары и экспорт WAV остаются за объёмом MVP. Контракт — в [игровом API](#api).
 
 ### Конфигурация
@@ -228,6 +221,7 @@ Pydantic-схемы описывают транспортный контракт
 | `backend/.env` | `PE_APP_NAME`, `PE_DEBUG`, `PE_CORS_ORIGINS` | Настройки API и разрешённые origins |
 | `backend/.env` | `PE_DATABASE_URL`, `PE_REDIS_URL`, `PE_INIT_DB` | PostgreSQL, Redis и создание таблиц при старте |
 | `backend/.env` | `PE_COMPOSE_SECONDS`, `PE_VOTE_SECONDS` | Длительность сочинения и голосования, по умолчанию 300 и 300 |
+| `backend/.env` | `PE_SMTP_*`, `PE_FRONTEND_RESET_URL`, `PE_RESET_TTL_SECONDS` | Отправка ссылок восстановления и срок их действия |
 | Корневой `.env` | `FRONTEND_PORT`, `BACKEND_PORT`, `VITE_API_URL`, `POSTGRES_*` | Подстановки Compose и первичная инициализация PostgreSQL |
 
 При запуске исходников backend читает свой `.env` независимо от рабочей директории;
@@ -244,19 +238,23 @@ JSON-массивами. В контейнере Compose задаёт настр
 
 ## Игровой API
 
-Базовый префикс — `/api/v1`. Кроме health, регистрация, вход и гостевой сеанс
-не требуют токена. Остальные запросы передают `Authorization: Bearer <token>`.
+Базовый префикс — `/api/v1`. Health, регистрация, вход, восстановление,
+гостевой сеанс и список публичных комнат не требуют токена. Остальные запросы
+передают `Authorization: Bearer <token>`.
 Ошибка приложения — JSON `{"code","detail"}`.
 
 | Метод и путь | Назначение |
 | --- | --- |
-| `POST /auth/register` | Аккаунт: `username`, `password`, необязательный `nickname` |
-| `POST /auth/login` | Вход в аккаунт |
+| `POST /auth/register` | Аккаунт: `email`, `nickname`, `password`; старый `username` также принимается |
+| `POST /auth/login` | Вход по `email` и `password`; старый `username` также принимается |
 | `POST /auth/logout` | Завершить текущую сессию |
+| `POST /auth/password-reset/request` | Запросить ссылку по `email`; нужен SMTP |
+| `POST /auth/password-reset/confirm` | Установить пароль по `token` и `password` |
 | `POST /session/guest` | Вход по нику |
 | `GET /session/me` | Текущий игрок |
 | `GET /loops` | Каталог лупов: id, BPM, число тактов, URL |
-| `POST /rooms` | Создать комнату и стать хостом |
+| `GET /rooms` | Публичные активные комнаты; `limit` и `offset` |
+| `POST /rooms` | Создать комнату: `name`, `visibility`, `capacity`, `bars`, необязательный `style` |
 | `POST /rooms/join` | Войти по коду |
 | `GET /rooms/{id}` | Состав, код, этап |
 | `DELETE /rooms/{id}/membership` | Выйти; роль хоста переходит к тому, кто вошёл раньше |
@@ -264,6 +262,8 @@ JSON-массивами. В контейнере Compose задаёт настр
 | `GET /rounds/{id}` | Состояние раунда |
 | `PUT /rounds/{id}/riff` | Сохранить или заменить свой рифф |
 | `POST /rounds/{id}/votes` | Один голос за чужой рифф |
+| `GET /profile/me` | Имя, handle, дата регистрации, статистика, лучший раунд и история аккаунта |
+| `PATCH /profile/me` | Обновить `name` и `handle` |
 
 Нота — `{pitch, start, duration, velocity}`. `start` и `duration` заданы в
 долях, в такте четыре доли, длина лупа равна `bars * 4`. Тембр — `clean` или
@@ -276,6 +276,15 @@ JSON-массивами. В контейнере Compose задаёт настр
 Изменение риффа после сочинения, повторный голос и голос за себя отклоняются.
 Войти в комнату нельзя во время сочинения и голосования. Игрок состоит не
 больше чем в одной комнате. Для старта нужны минимум два участника.
+Публичный список исключает приватные и закрытые комнаты. Лимит участников
+проверяется при входе; завершённые раунды сохраняются для истории профиля.
+Статистика считает завершённые раунды с сохранённым риффом игрока.
+Поля профиля для графика и лучшего раунда в JSON: `weeklyBattles`,
+`weekStarts`, `bestRound`.
+
+Для восстановления пароля backend отправляет ссылку через SMTP. Без `PE_SMTP_HOST`
+и `PE_SMTP_FROM` запрос возвращает 503. Ссылка ведёт на `PE_FRONTEND_RESET_URL`;
+страницу ввода нового пароля на frontend ещё нужно подключить.
 
 Свои барабанные лупы лежат в `frontend/public/sounds/drums/`. Описание каждого
 — объект в `backend/src/app/domain/grooves.json`: id, название, BPM, число
@@ -298,6 +307,10 @@ uv — отдельным Python-проектом в `backend`.
 | `pnpm lint` | ESLint и Steiger; предупреждения приводят к ошибке |
 | `pnpm lint:fsd` | Только структура и зависимости FSD |
 | `pnpm test:frontend` | Проверка FSD-конфигурации на допустимых и запрещённых примерах |
+| `pnpm lighthouse` | Отчёты Lighthouse для запущенного приложения на `127.0.0.1:3000` |
+| `pnpm lighthouse:check` | Проверка порогов отчёта: 70/80/80/80 для performance/accessibility/best-practices/SEO |
+| `pnpm storybook` | Каталог UI-компонентов и страниц на `http://localhost:6006` |
+| `pnpm storybook:build` | Статическая сборка Storybook в `frontend/storybook-static` |
 | `pnpm lint:backend` | Ruff для backend |
 | `pnpm test:backend` | Pytest: health API и CORS |
 | `uv run --project backend ruff check backend scripts` | Ruff, включая общие скрипты |
@@ -309,6 +322,18 @@ uv — отдельным Python-проектом в `backend`.
 `frontend/src/app/routeTree.gen.ts` генерируется TanStack Start и исключён из Git.
 Не редактируйте его вручную. Точные зависимости зафиксированы в `pnpm-lock.yaml`
 и `backend/uv.lock`; в CI используются `--frozen-lockfile` и `--locked`.
+
+Общие SCSS-токены, сброс стилей, адаптивные миксины и шрифт Manrope находятся в
+`frontend/src/shared/config/styles/`. Палитра настроена под Riff Battle; исходный
+шрифт и его лицензия перенесены из `frontend-2`. Глобальные стили подключают
+этот набор через `@use`, а компоненты могут использовать миксины через `@mixins`.
+Для локального Lighthouse сначала запустите frontend и backend, затем выполните
+`pnpm lighthouse` и `pnpm lighthouse:check`. Отчёты создаются в `frontend/` и
+исключены из Git.
+
+Истории Storybook лежат рядом с компонентами в `src/**/*.stories.tsx` и показывают
+состояния элементов `shared/ui`, карточки комнаты, фильтров, списка и страницы.
+Storybook использует те же глобальные SCSS-стили; его сборка проверяется в CI.
 
 Новую страницу создавайте как слайс в `pages/<name>` с публичным `index.ts`,
 затем подключайте тонким маршрутом из `app/routes`. Действия пользователя
@@ -382,10 +407,10 @@ PostgreSQL и Redis** и нужен только для намеренного �
 
 | Workflow / job | Проверки |
 | --- | --- |
-| [Frontend](.github/workflows/frontend.yml) | Node.js 24, pnpm и кэш; установка frozen, ESLint/Steiger, тесты FSD, production-сборка, затем TypeScript |
+| [Frontend](.github/workflows/frontend.yml) | Node.js 24, pnpm и кэш; установка frozen, ESLint/Steiger, тесты FSD, production-сборка, Storybook, затем TypeScript |
 | [Backend](.github/workflows/backend.yml) | Python 3.12, uv 0.8.18 и кэш; установка locked, Ruff lint/format, API-тесты и сборка пакета |
 | Workflow validation | actionlint: YAML, выражения и shell-команды workflow |
-| Docker Compose integration | Сборка образов, запуск четырёх сервисов, healthcheck, UID приложений, SQL-запрос, Redis PING, HTTP/SSR и статика |
+| Docker Compose integration | Сборка образов, запуск четырёх сервисов, healthcheck, UID приложений, SQL-запрос, Redis PING, HTTP/SSR, статика и Lighthouse |
 | CI | Итоговый успех только при успешном завершении всех проверок |
 
 Compose-job выводит логи и удаляет временные контейнеры и тома даже после ошибки.

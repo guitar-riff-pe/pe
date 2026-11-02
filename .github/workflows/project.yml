@@ -36,8 +36,8 @@ jobs:
 
   compose:
     name: Docker Compose integration
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
@@ -56,6 +56,31 @@ jobs:
           test "$(docker compose exec -T redis redis-cli ping)" = PONG
       - name: Verify HTTP, SSR and static assets
         run: python3 scripts/smoke-compose.py
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked Lighthouse dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lighthouse against the running stack
+        id: lighthouse
+        timeout-minutes: 5
+        run: |
+          export CHROME_PATH="$(command -v google-chrome)"
+          pnpm lighthouse
+          pnpm lighthouse:check
+      - name: Upload Lighthouse report
+        if: always() && steps.lighthouse.outcome != 'skipped'
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-report
+          path: |
+            frontend/lighthouse-report.report.html
+            frontend/lighthouse-report.report.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Container status and logs
         if: always()
         run: |
