@@ -1,0 +1,36 @@
+@use '@mixins' as mixins;
+
+.card {
+  display: grid;
+  min-height: 112px;
+  grid-template-columns: 196px 320px minmax(0, 1fr) 278px;
+  grid-template-areas: 'play title waveform vote' 'play state waveform vote';
+  align-items: center;
+  gap: 0 30px;
+  padding: 18px 19px;
+}
+.selected { border-color: var(--color-focus); }
+.card h2 { grid-area: title; align-self: end; margin: 0; font-size: 24px; }
+.play { grid-area: play; }
+.waveform { grid-area: waveform; height: 48px; --waveform-color: var(--color-border-strong); }
+.activeWaveform { --waveform-color: var(--color-danger); }
+.state { grid-area: state; align-self: start; margin: 6px 0 0; color: var(--color-text-secondary); font-size: 14px; }
+.selected .state { color: var(--color-text-secondary); }
+.vote { grid-area: vote; min-width: 0; }
+
+@include mixins.tablet {
+  .card { grid-template-columns: 150px minmax(120px, 1fr) minmax(140px, 1.5fr) 175px; gap: 0 18px; }
+  .card h2 { font-size: 20px; }
+}
+@include mixins.mobile {
+  .card { display: grid; min-height: 0; grid-template-columns: 52px minmax(0, 1fr); grid-template-areas: 'title title' 'play waveform' 'state state' 'vote vote'; gap: 0 16px; padding: 14px 15px 4px; }
+  .card h2 { margin-bottom: 8px; font-size: 20px; }
+  .play { width: 52px; min-height: 48px; }
+  .waveform { height: 48px; }
+  .state { display: none; }
+  .vote { margin-top: 5px; }
+  .vote button { min-height: 48px; }
+  .ownCard .state { display: block; margin: 12px 0 0; }
+  .ownCard .vote { display: none; }
+  .selected { border-color: var(--color-focus); }
+}

@@ -1,0 +1,19 @@
+@use '@mixins' as mixins;
+
+.page { width: min(100% - 80px, 1440px); max-width: none; padding: 22px 0 80px; }
+.intro { margin-bottom: 40px; }
+.intro h1 { margin: 0; font-size: 40px; line-height: 1.2; }
+.intro p { margin: 16px 0 22px; color: var(--color-text-secondary); font-size: 16px; }
+.intro strong { font-size: 14px; }
+.footer { margin-top: 26px; color: var(--color-text-secondary); font-size: 14px; }
+.footer p { margin: 0 0 12px; }
+.footer [role='status'] { color: var(--color-danger); }
+
+@include mixins.mobile {
+  .page { width: calc(100% - 40px); padding: 20px 0 112px; }
+  .intro { margin-bottom: 22px; }
+  .intro h1 { font-size: 28px; }
+  .intro p { margin: 16px 0 26px; font-size: 14px; }
+  .intro strong { font-size: 14px; }
+  .footer { margin-top: 22px; font-size: 13px; }
+}

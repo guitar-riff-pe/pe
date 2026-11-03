@@ -1,0 +1,60 @@
+@font-face {
+  font-family: Manrope;
+  src: url('./fonts/manrope-variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --font-family: 'Manrope', system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height: 1.5;
+  --color-background: #0b0e12;
+  --color-surface: #11161c;
+  --color-surface-raised: #18212b;
+  --color-surface-disabled: #202832;
+  --color-border: #405064;
+  --color-border-strong: #637082;
+  --color-border-subtle: #29333f;
+  --color-text: #f2f3f5;
+  --color-text-secondary: #b0bac5;
+  --color-text-muted: #8c96a4;
+  --color-primary: #c91f41;
+  --color-primary-hover: #b41b3d;
+  --color-primary-pressed: #a31535;
+  --color-text-on-primary: #f2f3f5;
+  --color-focus: #91c8ff;
+  --color-success: #71d8ac;
+  --color-warning: #f0c47a;
+  --color-danger: #ff687e;
+  --color-stage-red: #8d183b;
+  --color-stage-blue: #234562;
+  --color-stage-line: #8a4156;
+  --color-note-tile: #331e29;
+  --color-preview-stripe: #171d26;
+  --color-winner-border: #684050;
+  --color-winner-surface: #211920;
+  --color-waveform-soft: #dc6684;
+  --color-waveform-profile: #dd6a8b;
+  --color-profile-accent: #fb4f75;
+  --color-profile-eyebrow: #fb6083;
+  --color-profile-link: #ef7897;
+  --color-profile-sidebar-active: #281a25;
+  --color-profile-rhythm-bar: #4a3545;
+  --color-profile-best-border: #503145;
+  --color-profile-best-surface: #1b1720;
+  --color-profile-best-label: #f77999;
+  --color-avatar-border: #844860;
+  --color-avatar-surface: #2b2130;
+  --color-avatar-text: #f1cbd9;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-control: 12px;
+  --radius-popover: 16px;
+}

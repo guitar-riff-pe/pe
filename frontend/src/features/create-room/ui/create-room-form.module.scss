@@ -1,0 +1,14 @@
+@use '@mixins' as mixins;
+
+.form { display: grid; gap: 32px; }
+.form :global(input:not([type='radio'])) { min-height: 50px; }
+.submit { margin-top: 8px; }
+.notice { margin: -18px 0 0; color: var(--color-text-secondary); font-size: 14px; }
+.notice a { color: var(--color-danger); }
+.mobileNote { display: none; }
+
+@include mixins.mobile {
+  .form { gap: 32px; }
+  .submit { margin-top: 8px; }
+  .mobileNote { display: block; margin: 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.25; }
+}

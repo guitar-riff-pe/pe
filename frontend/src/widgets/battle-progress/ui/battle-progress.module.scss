@@ -1,0 +1,11 @@
+@use '@mixins' as mixins;
+
+.progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 0 0 34px; padding: 0; list-style: none; }
+.progress li { color: var(--color-text-secondary); font-size: 14px; }
+.progress .current { color: var(--color-text); font-weight: var(--font-weight-bold); }
+.mobileProgress { display: none; }
+
+@include mixins.mobile {
+  .progress { display: none; }
+  .mobileProgress { display: block; margin: 0 0 24px; color: var(--color-danger); font-size: 14px; font-weight: var(--font-weight-bold); }
+}

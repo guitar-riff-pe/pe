@@ -1,0 +1,34 @@
+@use '@mixins' as mixins;
+
+.card { position: relative; min-height: 124px; padding: 18px 23px; }
+.card h2 { margin: 0; font-size: 24px; line-height: 1.3; }
+.votes { margin: 17px 0 0; color: var(--color-text-secondary); font-size: 14px; }
+.play { position: absolute; right: 23px; bottom: 14px; width: 250px; }
+.winner { min-height: 394px; padding: 22px 27px; border-color: var(--color-winner-border); background: var(--color-winner-surface); }
+.rank { margin: 0 0 24px; color: var(--color-danger); font-size: 14px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.winner h2 { font-size: 50px; line-height: 1.2; }
+.winnerMeta { margin: 12px 0 30px; font-size: 18px; }
+.waveform { height: 70px; --waveform-color: var(--color-waveform-soft); }
+.activeWaveform { --waveform-color: var(--color-danger); }
+.winner .play { position: static; width: 100%; margin-top: 39px; }
+.mobileVotes { display: none; }
+
+@include mixins.tablet {
+  .card h2 { font-size: 20px; }
+  .play { width: 190px; }
+  .winner h2 { font-size: 40px; }
+}
+@include mixins.mobile {
+  .card { min-height: 69px; padding: 9px 15px; }
+  .card h2 { max-width: calc(100% - 66px); font-size: 16px; }
+  .votes { margin: 6px 0 0; font-size: 13px; }
+  .play { right: 15px; bottom: 9px; width: 52px; min-height: 48px; }
+  .desktopVotes { display: none; }
+  .mobileVotes { display: inline; }
+  .winner { min-height: 205px; padding: 17px 15px 6px; }
+  .rank { margin-bottom: 17px; }
+  .winner h2 { max-width: none; font-size: 34px; }
+  .winnerMeta { margin: 5px 0 23px; color: var(--color-text-secondary); font-size: 14px; }
+  .waveform { display: none; }
+  .winner .play { width: 100%; margin-top: 0; }
+}

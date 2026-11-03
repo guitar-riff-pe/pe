@@ -1,0 +1,480 @@
+{
+  "loops": [
+    {
+      "id": "blast-155-8",
+      "title": "Бласт, 155 BPM, 8 тактов",
+      "bpm": 155,
+      "bars": 8,
+      "file": "blast-155-8.wav"
+    },
+    {
+      "id": "blast-200-8",
+      "title": "Бласт, 200 BPM, 8 тактов",
+      "bpm": 200,
+      "bars": 8,
+      "file": "blast-200-8.wav"
+    },
+    {
+      "id": "blast2-200-8",
+      "title": "Бласт 2, 200 BPM, 8 тактов",
+      "bpm": 200,
+      "bars": 8,
+      "file": "blast2-200-8.wav"
+    },
+    {
+      "id": "blast3-200-8",
+      "title": "Бласт 3, 200 BPM, 8 тактов",
+      "bpm": 200,
+      "bars": 8,
+      "file": "blast3-200-8.wav"
+    },
+    {
+      "id": "blastbeat-150-8",
+      "title": "Бластбит, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "blastbeat-150-8.wav"
+    },
+    {
+      "id": "blastbeat-160-8",
+      "title": "Бластбит, 160 BPM, 8 тактов",
+      "bpm": 160,
+      "bars": 8,
+      "file": "blastbeat-160-8.wav"
+    },
+    {
+      "id": "blasthat-120-4",
+      "title": "Бласт, хэт, 120 BPM, 4 такта",
+      "bpm": 120,
+      "bars": 4,
+      "file": "blasthat-120-4.wav"
+    },
+    {
+      "id": "blastride-120-4",
+      "title": "Бласт, райд, 120 BPM, 4 такта",
+      "bpm": 120,
+      "bars": 4,
+      "file": "blastride-120-4.wav"
+    },
+    {
+      "id": "breakdown-110-8",
+      "title": "Брейкдаун, 110 BPM, 8 тактов",
+      "bpm": 110,
+      "bars": 8,
+      "file": "breakdown-110-8.wav"
+    },
+    {
+      "id": "breakdown-125-8",
+      "title": "Брейкдаун, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "breakdown-125-8.wav"
+    },
+    {
+      "id": "breakdown-132-16",
+      "title": "Брейкдаун, 132 BPM, 16 тактов",
+      "bpm": 132,
+      "bars": 16,
+      "file": "breakdown-132-16.wav"
+    },
+    {
+      "id": "breakdown-140-8",
+      "title": "Брейкдаун, 140 BPM, 8 тактов",
+      "bpm": 140,
+      "bars": 8,
+      "file": "breakdown-140-8.wav"
+    },
+    {
+      "id": "breakdown-145-8",
+      "title": "Брейкдаун, 145 BPM, 8 тактов",
+      "bpm": 145,
+      "bars": 8,
+      "file": "breakdown-145-8.wav"
+    },
+    {
+      "id": "breakdown-150-16",
+      "title": "Брейкдаун, 150 BPM, 16 тактов",
+      "bpm": 150,
+      "bars": 16,
+      "file": "breakdown-150-16.wav"
+    },
+    {
+      "id": "breakdown2-145-8",
+      "title": "Брейкдаун 2, 145 BPM, 8 тактов",
+      "bpm": 145,
+      "bars": 8,
+      "file": "breakdown2-145-8.wav"
+    },
+    {
+      "id": "breakdown2-150-8",
+      "title": "Брейкдаун 2, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "breakdown2-150-8.wav"
+    },
+    {
+      "id": "breakslow-140-8",
+      "title": "Медленный брейкдаун, 140 BPM, 8 тактов",
+      "bpm": 140,
+      "bars": 8,
+      "file": "breakslow-140-8.wav"
+    },
+    {
+      "id": "china-100-8",
+      "title": "Чайна, 100 BPM, 8 тактов",
+      "bpm": 100,
+      "bars": 8,
+      "file": "china-100-8.wav"
+    },
+    {
+      "id": "china-110-8",
+      "title": "Чайна, 110 BPM, 8 тактов",
+      "bpm": 110,
+      "bars": 8,
+      "file": "china-110-8.wav"
+    },
+    {
+      "id": "chorus-110-16",
+      "title": "Припев, 110 BPM, 16 тактов",
+      "bpm": 110,
+      "bars": 16,
+      "file": "chorus-110-16.wav"
+    },
+    {
+      "id": "chorus-125-8",
+      "title": "Припев, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "chorus-125-8.wav"
+    },
+    {
+      "id": "chorus-130-16",
+      "title": "Припев, 130 BPM, 16 тактов",
+      "bpm": 130,
+      "bars": 16,
+      "file": "chorus-130-16.wav"
+    },
+    {
+      "id": "chorus-132-16",
+      "title": "Припев, 132 BPM, 16 тактов",
+      "bpm": 132,
+      "bars": 16,
+      "file": "chorus-132-16.wav"
+    },
+    {
+      "id": "chorus-135-16",
+      "title": "Припев, 135 BPM, 16 тактов",
+      "bpm": 135,
+      "bars": 16,
+      "file": "chorus-135-16.wav"
+    },
+    {
+      "id": "chorus-140-8",
+      "title": "Припев, 140 BPM, 8 тактов",
+      "bpm": 140,
+      "bars": 8,
+      "file": "chorus-140-8.wav"
+    },
+    {
+      "id": "chorus-145-8",
+      "title": "Припев, 145 BPM, 8 тактов",
+      "bpm": 145,
+      "bars": 8,
+      "file": "chorus-145-8.wav"
+    },
+    {
+      "id": "chorus-150-16",
+      "title": "Припев, 150 BPM, 16 тактов",
+      "bpm": 150,
+      "bars": 16,
+      "file": "chorus-150-16.wav"
+    },
+    {
+      "id": "chorus-160-16",
+      "title": "Припев, 160 BPM, 16 тактов",
+      "bpm": 160,
+      "bars": 16,
+      "file": "chorus-160-16.wav"
+    },
+    {
+      "id": "chorus-180-8",
+      "title": "Припев, 180 BPM, 8 тактов",
+      "bpm": 180,
+      "bars": 8,
+      "file": "chorus-180-8.wav"
+    },
+    {
+      "id": "chorus-95-8",
+      "title": "Припев, 95 BPM, 8 тактов",
+      "bpm": 95,
+      "bars": 8,
+      "file": "chorus-95-8.wav"
+    },
+    {
+      "id": "chorus2-130-16",
+      "title": "Припев 2, 130 BPM, 16 тактов",
+      "bpm": 130,
+      "bars": 16,
+      "file": "chorus2-130-16.wav"
+    },
+    {
+      "id": "chorus2-150-8",
+      "title": "Припев 2, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "chorus2-150-8.wav"
+    },
+    {
+      "id": "closed-132-8",
+      "title": "Закрытый хэт, 132 BPM, 8 тактов",
+      "bpm": 132,
+      "bars": 8,
+      "file": "closed-132-8.wav"
+    },
+    {
+      "id": "closed-135-8",
+      "title": "Закрытый хэт, 135 BPM, 8 тактов",
+      "bpm": 135,
+      "bars": 8,
+      "file": "closed-135-8.wav"
+    },
+    {
+      "id": "djent-130-8",
+      "title": "Джент, 130 BPM, 8 тактов",
+      "bpm": 130,
+      "bars": 8,
+      "file": "djent-130-8.wav"
+    },
+    {
+      "id": "hat-125-8",
+      "title": "Хэт, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "hat-125-8.wav"
+    },
+    {
+      "id": "hat-90-4",
+      "title": "Хэт, 90 BPM, 4 такта",
+      "bpm": 90,
+      "bars": 4,
+      "file": "hat-90-4.wav"
+    },
+    {
+      "id": "hatopen-125-8",
+      "title": "Открытый хэт, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "hatopen-125-8.wav"
+    },
+    {
+      "id": "openhat-135-8",
+      "title": "Открытый хэт, 135 BPM, 8 тактов",
+      "bpm": 135,
+      "bars": 8,
+      "file": "openhat-135-8.wav"
+    },
+    {
+      "id": "openhat-95-8",
+      "title": "Открытый хэт, 95 BPM, 8 тактов",
+      "bpm": 95,
+      "bars": 8,
+      "file": "openhat-95-8.wav"
+    },
+    {
+      "id": "openhat2-135-16",
+      "title": "Открытый хэт 2, 135 BPM, 16 тактов",
+      "bpm": 135,
+      "bars": 16,
+      "file": "openhat2-135-16.wav"
+    },
+    {
+      "id": "openhat2-95-8",
+      "title": "Открытый хэт 2, 95 BPM, 8 тактов",
+      "bpm": 95,
+      "bars": 8,
+      "file": "openhat2-95-8.wav"
+    },
+    {
+      "id": "poly-120-4",
+      "title": "Полиритмия, 120 BPM, 4 такта",
+      "bpm": 120,
+      "bars": 4,
+      "file": "poly-120-4.wav"
+    },
+    {
+      "id": "ride-100-6",
+      "title": "Райд, 100 BPM, 6 тактов",
+      "bpm": 100,
+      "bars": 6,
+      "file": "ride-100-6.wav"
+    },
+    {
+      "id": "ride-110-8",
+      "title": "Райд, 110 BPM, 8 тактов",
+      "bpm": 110,
+      "bars": 8,
+      "file": "ride-110-8.wav"
+    },
+    {
+      "id": "ride-125-8",
+      "title": "Райд, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "ride-125-8.wav"
+    },
+    {
+      "id": "ride-190-16",
+      "title": "Райд, 190 BPM, 16 тактов",
+      "bpm": 190,
+      "bars": 16,
+      "file": "ride-190-16.wav"
+    },
+    {
+      "id": "ride-90-6",
+      "title": "Райд, 90 BPM, 6 тактов",
+      "bpm": 90,
+      "bars": 6,
+      "file": "ride-90-6.wav"
+    },
+    {
+      "id": "ride-95-8",
+      "title": "Райд, 95 BPM, 8 тактов",
+      "bpm": 95,
+      "bars": 8,
+      "file": "ride-95-8.wav"
+    },
+    {
+      "id": "ride2-130-8",
+      "title": "Райд 2, 130 BPM, 8 тактов",
+      "bpm": 130,
+      "bars": 8,
+      "file": "ride2-130-8.wav"
+    },
+    {
+      "id": "ride2-135-16",
+      "title": "Райд 2, 135 BPM, 16 тактов",
+      "bpm": 135,
+      "bars": 16,
+      "file": "ride2-135-16.wav"
+    },
+    {
+      "id": "ride2-90-8",
+      "title": "Райд 2, 90 BPM, 8 тактов",
+      "bpm": 90,
+      "bars": 8,
+      "file": "ride2-90-8.wav"
+    },
+    {
+      "id": "ridegrooves-155-16",
+      "title": "Райд, 155 BPM, 16 тактов",
+      "bpm": 155,
+      "bars": 16,
+      "file": "ridegrooves-155-16.wav"
+    },
+    {
+      "id": "riff-100-8",
+      "title": "Рифф, 100 BPM, 8 тактов",
+      "bpm": 100,
+      "bars": 8,
+      "file": "riff-100-8.wav"
+    },
+    {
+      "id": "riff-115-8",
+      "title": "Рифф, 115 BPM, 8 тактов",
+      "bpm": 115,
+      "bars": 8,
+      "file": "riff-115-8.wav"
+    },
+    {
+      "id": "riff-125-8",
+      "title": "Рифф, 125 BPM, 8 тактов",
+      "bpm": 125,
+      "bars": 8,
+      "file": "riff-125-8.wav"
+    },
+    {
+      "id": "riff-130-8",
+      "title": "Рифф, 130 BPM, 8 тактов",
+      "bpm": 130,
+      "bars": 8,
+      "file": "riff-130-8.wav"
+    },
+    {
+      "id": "riff-140-16",
+      "title": "Рифф, 140 BPM, 16 тактов",
+      "bpm": 140,
+      "bars": 16,
+      "file": "riff-140-16.wav"
+    },
+    {
+      "id": "riff-150-8",
+      "title": "Рифф, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "riff-150-8.wav"
+    },
+    {
+      "id": "riff-160-8",
+      "title": "Рифф, 160 BPM, 8 тактов",
+      "bpm": 160,
+      "bars": 8,
+      "file": "riff-160-8.wav"
+    },
+    {
+      "id": "riff-180-16",
+      "title": "Рифф, 180 BPM, 16 тактов",
+      "bpm": 180,
+      "bars": 16,
+      "file": "riff-180-16.wav"
+    },
+    {
+      "id": "riff2-130-8",
+      "title": "Рифф 2, 130 BPM, 8 тактов",
+      "bpm": 130,
+      "bars": 8,
+      "file": "riff2-130-8.wav"
+    },
+    {
+      "id": "riff2-140-8",
+      "title": "Рифф 2, 130 BPM, 8 тактов",
+      "bpm": 130,
+      "bars": 8,
+      "file": "riff2-140-8.wav"
+    },
+    {
+      "id": "riff2-150-8",
+      "title": "Рифф 2, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "riff2-150-8.wav"
+    },
+    {
+      "id": "riff2-160-8",
+      "title": "Рифф 2, 160 BPM, 8 тактов",
+      "bpm": 160,
+      "bars": 8,
+      "file": "riff2-160-8.wav"
+    },
+    {
+      "id": "riff2-180-8",
+      "title": "Рифф 2, 180 BPM, 8 тактов",
+      "bpm": 180,
+      "bars": 8,
+      "file": "riff2-180-8.wav"
+    },
+    {
+      "id": "riff3-150-8",
+      "title": "Рифф 3, 150 BPM, 8 тактов",
+      "bpm": 150,
+      "bars": 8,
+      "file": "riff3-150-8.wav"
+    },
+    {
+      "id": "riff3-180-16",
+      "title": "Рифф 3, 180 BPM, 16 тактов",
+      "bpm": 180,
+      "bars": 16,
+      "file": "riff3-180-16.wav"
+    }
+  ]
+}

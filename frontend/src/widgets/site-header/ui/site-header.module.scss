@@ -1,0 +1,34 @@
+@use '@mixins' as mixins;
+
+.header { border-bottom: 1px solid var(--color-border-subtle); }
+.inner {
+  display: flex;
+  width: min(100% - 80px, 1440px);
+  min-height: 80px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-inline: auto;
+}
+.account { font-size: 14px; font-weight: var(--font-weight-bold); white-space: nowrap; }
+.mobileAccount { display: none; }
+.mobileNav { display: none; }
+
+@include mixins.mobile {
+  .inner { width: calc(100% - 40px); min-height: 70px; }
+  .nav, .account { display: none; }
+  .mobileAccount { display: block; color: var(--color-text-secondary); font-size: 13px; text-decoration: none; }
+  .mobileNav {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid var(--color-border-subtle);
+    background: var(--color-surface);
+  }
+}

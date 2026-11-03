@@ -1,0 +1,6 @@
+.navigation { display: flex; gap: 48px; }
+.navigation a { color: var(--color-text-secondary); text-decoration: none; }
+.navigation a:hover, .navigation a[aria-current='page'] { color: var(--color-text); }
+.mobile { gap: 0; }
+.mobile a { font-size: 14px; font-weight: var(--font-weight-bold); }
+.mobile a[aria-current='page'] { color: var(--color-danger); }

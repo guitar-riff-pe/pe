@@ -1,0 +1,7 @@
+@use '@mixins' as mixins;
+
+.board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.17fr); gap: 36px; }
+.others { display: grid; gap: 16px; }
+
+@include mixins.tablet { .board { gap: 20px; } }
+@include mixins.mobile { .board { grid-template-columns: 1fr; gap: 20px; } .others { gap: 9px; } }

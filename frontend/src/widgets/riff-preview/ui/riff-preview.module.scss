@@ -1,0 +1,25 @@
+.stage { position: relative; display: grid; min-height: 492px; align-items: center; isolation: isolate; }
+.stage::before {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 10%;
+  background: linear-gradient(116deg, transparent 0 13%, var(--color-preview-stripe) 13% 30%, transparent 30% 34%, color-mix(in srgb, var(--color-primary) 23%, transparent) 34% 58%, transparent 58% 72%, var(--color-preview-stripe) 72% 88%, transparent 88%);
+  content: '';
+  transform: skewX(-8deg);
+}
+.card { padding: 24px; border-color: var(--color-border-subtle); box-shadow: 0 24px 48px rgb(0 0 0 / 18%); }
+.eyebrow { margin: 0 0 14px; color: var(--color-text-muted); font-size: 11px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.heading h2 { margin: 0; font-size: 24px; line-height: 1.2; }
+.heading span { color: var(--color-text-muted); font-size: 12px; white-space: nowrap; }
+.roll {
+  position: relative;
+  height: 122px;
+  margin-top: 24px;
+  background: repeating-linear-gradient(to bottom, var(--color-border-subtle) 0 1px, transparent 1px 12px);
+}
+.note { position: absolute; height: 10px; border-radius: 2px; background: var(--color-danger); }
+.waveform { height: 34px; margin-top: 14px; opacity: .75; }

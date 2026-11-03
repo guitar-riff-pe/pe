@@ -1,0 +1,8 @@
+@use '@mixins' as mixins;
+
+.card { min-width: 0; padding: 20px 23px; border-color: var(--color-profile-best-border); background: var(--color-profile-best-surface); }
+.card > span { color: var(--color-profile-best-label); font-size: 13px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.card h2 { margin: 20px 0 7px; font-size: 24px; }
+.card p { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
+.waveform { height: 58px; margin-top: 20px; --waveform-color: var(--color-waveform-profile); }
+@include mixins.mobile { .card { display: none; } }

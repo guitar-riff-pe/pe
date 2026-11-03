@@ -1,0 +1,8 @@
+@use '@mixins' as mixins;
+
+.row { display: grid; min-height: 54px; grid-template-columns: 2fr .75fr .85fr .6fr; align-items: center; gap: 16px; padding: 12px 19px; font-size: 14px; }
+.row strong { font-size: 16px; }
+.row span { color: var(--color-text-secondary); }
+.row .win { color: var(--color-profile-accent); }
+
+@include mixins.mobile { .row { min-height: 69px; grid-template-columns: 1fr; gap: 0; padding: 10px 15px; } .row strong { font-size: 15px; } .row .date { display: none; } .row span { font-size: 13px; } .row .win { color: var(--color-profile-accent); } .votes { display: none; } }

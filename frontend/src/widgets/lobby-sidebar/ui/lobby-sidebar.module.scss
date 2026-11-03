@@ -1,0 +1,36 @@
+@use '@mixins' as mixins;
+
+.panel { align-self: start; min-height: 525px; padding: 24px; }
+.invite h2 { margin: 0 0 18px; font-size: 24px; }
+.codeLabel { margin: 0 0 8px; color: var(--color-text-secondary); font-size: 14px; }
+.code { margin: 0 0 16px; color: var(--color-text); font-size: 36px; font-weight: 800; letter-spacing: .02em; line-height: 1.2; user-select: all; }
+.copyActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.copyActions button { justify-content: flex-start; white-space: nowrap; }
+.round { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--color-border-subtle); }
+.settings { margin: 0 0 10px; font-size: 17px; }
+.description, .hostNote { color: var(--color-text-secondary); font-size: 14px; }
+.description { margin: 0 0 32px; }
+.hostNote { margin: 20px 0 0; }
+.feedback { margin: 16px 0 0; color: var(--color-text-secondary); font-size: 13px; }
+.feedback a { color: var(--color-danger); }
+
+@include mixins.tablet {
+  .panel { padding: 20px; }
+  .copyActions { gap: 8px; }
+  .copyActions button { padding-inline: 10px; font-size: 12px; }
+}
+@include mixins.mobile {
+  .panel { display: contents; }
+  .invite { order: 1; padding: 15px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+  .invite h2 { display: none; }
+  .code { margin-bottom: 14px; font-size: 30px; }
+  .copyActions { gap: 16px; }
+  .copyActions button { min-height: 48px; justify-content: flex-start; padding-inline: 15px; font-size: 14px; }
+  .desktopText { display: none; }
+  .round { display: flex; flex-direction: column; order: 3; margin-top: 0; padding-top: 0; border: 0; }
+  .settings { order: 1; margin-bottom: 0; font-size: 15px; }
+  .description { display: none; }
+  .hostNote { order: 2; margin: 18px 0 34px; }
+  .round button { order: 3; margin-top: 0; }
+  .feedback { order: 4; margin: -18px 0 0; }
+}

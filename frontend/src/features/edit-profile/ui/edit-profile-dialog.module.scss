@@ -1,0 +1,9 @@
+@use '@mixins' as mixins;
+
+.backdrop { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 20px; background: rgb(0 0 0 / 70%); }
+.dialog { width: min(100%, 430px); border: 1px solid var(--color-border); border-radius: var(--radius-popover); background: var(--color-surface); padding: 28px; box-shadow: 0 24px 80px rgb(0 0 0 / 40%); }
+.dialog form { display: grid; gap: 18px; }
+.dialog h2 { margin: 0 0 2px; font-size: 23px; }
+.actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 6px; }
+
+@include mixins.mobile { .dialog { padding: 20px; } .actions button { flex: 1; } }

@@ -1,0 +1,9 @@
+@use '@mixins' as mixins;
+
+.history { position: relative; margin-top: 28px; }
+.history h2 { margin: 0 0 14px; font-size: 23px; }
+.battles { display: grid; gap: 8px; }
+.action { position: absolute; top: 5px; right: 0; border: 0; background: none; color: var(--color-profile-link); font: inherit; font-size: 13px; cursor: pointer; }
+.action:hover { color: var(--color-text); }
+
+@include mixins.mobile { .history { margin-top: 32px; } .history h2 { font-size: 20px; } .battles { gap: 13px; } .action { position: static; margin-top: 25px; padding: 0; } }

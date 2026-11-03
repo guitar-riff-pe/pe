@@ -1,0 +1,11 @@
+flowchart LR
+    guest[Гость] -->|ник, комнаты, рифф, голос| system
+    account[Владелец аккаунта] -->|вход, профиль, игра| system
+    host[Хост] -->|создание комнаты и запуск раунда| system
+    subgraph system[«Riff Battle»: frontend + backend]
+      ui[Веб-интерфейс] --> api[HTTP API]
+    end
+    api -->|игровые данные| pg[(PostgreSQL)]
+    api -->|сессии| redis[(Redis)]
+    api -->|ссылка восстановления| smtp[Почтовый сервер SMTP]
+    account <-->|письмо восстановления| smtp

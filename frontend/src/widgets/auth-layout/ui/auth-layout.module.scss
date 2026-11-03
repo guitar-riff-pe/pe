@@ -1,0 +1,35 @@
+@use '@mixins' as mixins;
+
+.layout {
+  display: grid;
+  width: min(100% - 80px, 1360px);
+  max-width: none;
+  min-height: calc(100vh - 80px);
+  grid-template-columns: minmax(0, 1fr) minmax(440px, 506px);
+  align-items: start;
+  gap: 8%;
+  margin-inline: auto;
+  padding: 34px 0 70px;
+}
+.hero { padding: 80px 0 0 32px; }
+.eyebrow { margin: 0 0 44px; color: var(--color-danger); font-size: 14px; font-weight: var(--font-weight-bold); text-transform: uppercase; }
+.hero h1 { margin: 0; font-size: clamp(54px, 5vw, 70px); line-height: 1.1; }
+.heroDescription { margin: 54px 0 60px; color: var(--color-text-secondary); font-size: 20px; line-height: 1.25; }
+.wave { width: min(100%, 624px); height: 110px; fill: var(--color-danger); opacity: .75; }
+.card { min-height: 680px; padding: 32px; }
+.centered { display: block; padding-top: 132px; }
+.centeredContent { width: min(100%, 440px); margin-inline: auto; }
+
+@include mixins.tablet {
+  .layout { grid-template-columns: minmax(0, 1fr) minmax(380px, 470px); gap: 4%; }
+  .hero { padding-left: 0; }
+  .hero h1 { font-size: 52px; }
+  .heroDescription { font-size: 17px; }
+}
+
+@include mixins.mobile {
+  .layout { display: block; width: calc(100% - 40px); min-height: calc(100vh - 70px); padding: 36px 0 90px; }
+  .hero { display: none; }
+  .card { min-height: 0; padding: 0; border: 0; background: transparent; }
+  .centered { padding-top: 52px; }
+}

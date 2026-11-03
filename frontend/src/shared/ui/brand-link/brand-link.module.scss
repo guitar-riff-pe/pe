@@ -1,0 +1,6 @@
+@use '@mixins' as mixins;
+
+.brand { color: var(--color-text); font-size: 22px; font-weight: 800; text-decoration: none; white-space: nowrap; }
+.brand span { color: var(--color-danger); }
+.monochrome span { color: var(--color-text); }
+@include mixins.mobile { .brand { font-size: 18px; } }

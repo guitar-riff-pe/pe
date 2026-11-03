@@ -1,0 +1,30 @@
+@use '@mixins' as mixins;
+
+.page { width: min(100% - 80px, 1440px); max-width: none; padding: 22px 0 40px; }
+.intro { margin-bottom: 45px; }
+.intro h1 { margin: 0; font-size: 40px; line-height: 1.2; }
+.intro p { margin: 14px 0 0; color: var(--color-text-secondary); font-size: 16px; }
+.summary { margin-top: 26px; font-size: 14px; }
+.summary p { margin: 0 0 16px; }
+.summary p + p { color: var(--color-text-secondary); }
+.summary [role='status'] { color: var(--color-danger); }
+.mobileBreak { display: none; }
+.actions { display: flex; width: calc((100% - 36px) * .54); gap: 24px; margin: 44px 0 0 auto; }
+.actions a { display: inline-flex; flex: 1; min-height: 49px; align-items: center; padding: 10px 16px; border-radius: var(--radius-control); color: var(--color-text); font-size: 14px; font-weight: var(--font-weight-bold); text-decoration: none; }
+.primaryAction { background: var(--color-primary); }
+.primaryAction:hover { background: var(--color-primary-hover); }
+.secondaryAction { border: 1px solid var(--color-border); background: var(--color-surface-raised); }
+.secondaryAction:hover { border-color: var(--color-border-strong); }
+
+@include mixins.tablet { .actions { width: 100%; } }
+@include mixins.mobile {
+  .page { width: calc(100% - 40px); padding: 20px 0 95px; }
+  .intro { margin-bottom: 30px; }
+  .intro h1 { font-size: 28px; }
+  .intro p { margin-top: 12px; font-size: 14px; }
+  .summary { margin-top: 20px; }
+  .summary p { margin-bottom: 17px; }
+  .mobileBreak { display: initial; }
+  .actions { width: 100%; flex-direction: column; gap: 16px; margin-top: 17px; }
+  .actions a { width: 100%; min-height: 48px; }
+}
