@@ -5,9 +5,9 @@ from app.domain.models import Room, Round
 from app.domain.store import Tx
 
 
-def require_room_member(tx: Tx, room_id: UUID, player_id: UUID) -> Room:
-    room = tx.get_room(room_id)
-    if room is None or not tx.has_member(room_id, player_id):
+def require_room_member(tx: Tx, room_id: UUID, player_id: UUID, *, lock: bool = False) -> Room:
+    room = tx.lock_room(room_id) if lock else tx.get_room(room_id)
+    if room is None or room.closed_at is not None or not tx.has_member(room_id, player_id):
         raise not_found("Комната не найдена")
     return room
 

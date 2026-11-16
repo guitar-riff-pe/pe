@@ -49,6 +49,15 @@ def join_room(
     return room_out(services.room.join(player, payload.code))
 
 
+@router.get("/current", response_model=RoomOut | None)
+def current_room(
+    player: Annotated[Player, Depends(get_current_player)],
+    services: Annotated[Services, Depends(get_services)],
+) -> RoomOut | None:
+    room = services.room.current(player)
+    return room_out(room) if room is not None else None
+
+
 @router.get("/{room_id}", response_model=RoomOut)
 def get_room(
     room_id: UUID,

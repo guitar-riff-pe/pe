@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 from app.domain.catalog import default_loop_for_bars
 from app.domain.errors import conflict, not_found, unavailable
-from app.domain.models import Player, Room
+from app.domain.models import Membership, Player, Room, Round
 from app.domain.store import Store, Tx
 from app.domain.views import MemberView, RoomView
 from app.services.access import require_room_member
@@ -76,15 +76,31 @@ class RoomService:
             room = require_room_member(tx, room_id, player.id)
             return self._view(tx, room, now)
 
+    def current(self, player: Player) -> RoomView | None:
+        with self._store.transaction() as tx:
+            membership = tx.membership_for_player(player.id)
+            if membership is None:
+                return None
+            room = tx.get_room(membership.room_id)
+            if room is None or room.closed_at is not None:
+                return None
+            return self._view(tx, room, self._clock.now())
+
     def list_public(self, *, limit: int = 100, offset: int = 0) -> list[RoomView]:
         now = self._clock.now()
         with self._store.transaction() as tx:
-            return [self._view(tx, room, now) for room in tx.list_public_rooms(limit, offset)]
+            rooms = tx.list_public_rooms(limit, offset)
+            ids = [room.id for room in rooms]
+            members = tx.members_by_rooms(ids)
+            rounds = tx.latest_rounds(ids)
+            return [
+                self._room_view(room, members[room.id], rounds.get(room.id), now) for room in rooms
+            ]
 
     def leave(self, player: Player, room_id: UUID) -> None:
         now = self._clock.now()
         with self._store.transaction() as tx:
-            room = require_room_member(tx, room_id, player.id)
+            room = require_room_member(tx, room_id, player.id, lock=True)
             members = tx.list_members(room.id)
             tx.delete_membership(room.id, player.id)
             remaining = [item for item in members if item.player_id != player.id]
@@ -104,6 +120,12 @@ class RoomService:
     def _view(self, tx: Tx, room: Room, now: datetime) -> RoomView:
         members = tx.list_members(room.id)
         latest = tx.latest_round(room.id)
+        return self._room_view(room, members, latest, now)
+
+    @staticmethod
+    def _room_view(
+        room: Room, members: list[Membership], latest: Round | None, now: datetime
+    ) -> RoomView:
         loop = default_loop_for_bars(room.bars) if latest is None else None
         return RoomView(
             id=room.id,

@@ -15,7 +15,6 @@ class PlayerOut(BaseModel):
 
 
 class AuthOut(BaseModel):
-    token: str
     player: PlayerOut
 
 
@@ -112,7 +111,7 @@ class ResetConfirmIn(BaseModel):
 
 
 def auth_out(view: AuthView) -> AuthOut:
-    return AuthOut(token=view.token, player=player_out(view.player))
+    return AuthOut(player=player_out(view.player))
 
 
 def player_out(player: PlayerView) -> PlayerOut:

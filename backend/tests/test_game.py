@@ -39,14 +39,14 @@ def client(clock: FrozenClock):
         sessions=MemorySessionStore(),
         clock=clock,
     )
-    with TestClient(app) as test_client:
+    with TestClient(app, headers={"X-CSRF-Protection": "1"}) as test_client:
         yield test_client
 
 
 def guest(client: TestClient, nickname: str) -> dict[str, str]:
     response = client.post("/api/v1/session/guest", json={"nickname": nickname})
     assert response.status_code == 201, response.text
-    return {"Authorization": f"Bearer {response.json()['token']}"}
+    return {"Cookie": f"riff_session={response.cookies['riff_session']}"}
 
 
 def create_room(client: TestClient, headers: dict[str, str]) -> dict[str, object]:
@@ -121,8 +121,8 @@ def test_guest_register_login_and_logout(client: TestClient) -> None:
         json={"username": "ALICE", "password": "secret-pass"},
     )
     assert logged_in.status_code == 200, logged_in.text
-    token = logged_in.json()["token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    token = logged_in.cookies["riff_session"]
+    headers = {"Cookie": f"riff_session={token}"}
     assert client.get("/api/v1/session/me", headers=headers).status_code == 200
 
     wrong = client.post(
@@ -134,6 +134,32 @@ def test_guest_register_login_and_logout(client: TestClient) -> None:
     assert client.post("/api/v1/auth/logout", headers=headers).status_code == 204
     assert client.get("/api/v1/session/me", headers=headers).status_code == 401
     assert client.get("/api/v1/session/me").status_code == 401
+
+
+def test_current_room_tracks_private_membership_and_leaving(client: TestClient) -> None:
+    headers = guest(client, "Хост")
+    assert client.get("/api/v1/rooms/current", headers=headers).json() is None
+    room = client.post(
+        "/api/v1/rooms",
+        headers=headers,
+        json={
+            "name": "Private Garage",
+            "visibility": "private",
+            "capacity": 3,
+            "bars": 8,
+        },
+    ).json()
+    assert client.get("/api/v1/rooms").json() == []
+    current = client.get("/api/v1/rooms/current", headers=headers)
+    assert current.status_code == 200
+    assert current.json()["id"] == room["id"]
+    assert current.json()["bars"] == 8
+    assert (
+        client.delete(f"/api/v1/rooms/{room['id']}/membership", headers=headers).status_code == 204
+    )
+    assert client.get("/api/v1/rooms/current", headers=headers).json() is None
+    client.cookies.clear()
+    assert client.get("/api/v1/rooms/current").status_code == 401
 
 
 def test_room_is_shared_and_round_needs_three_players(client: TestClient) -> None:
@@ -223,6 +249,7 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
 
     voting = client.get(f"/api/v1/rounds/{started['id']}", headers=other)
     assert voting.json()["stage"] == "voting"
+    assert voting.json()["votes_count"] == 0
     assert "СкрытыйАвтор" not in voting.text
     me = client.get("/api/v1/session/me", headers=other).json()
     assert me["id"] not in voting.text
@@ -254,6 +281,7 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
     assert again.status_code == 409
 
     host_view = client.get(f"/api/v1/rounds/{started['id']}", headers=host).json()
+    assert host_view["votes_count"] == 1
     host_choice = next(item["id"] for item in host_view["riffs"] if not item["is_own"])
     host_vote = client.post(
         f"/api/v1/rounds/{started['id']}/votes",
@@ -267,6 +295,7 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
     clock.advance(1)
     results = client.get(f"/api/v1/rounds/{started['id']}", headers=host).json()
     assert results["stage"] == "results"
+    assert results["votes_count"] == 2
     assert results["winner_ids"]
     winners = [item for item in results["riffs"] if item["is_winner"]]
     assert len(winners) == 2
@@ -285,6 +314,65 @@ def test_round_keeps_players_in_sync_and_hides_authors_until_results(
     assert nxt["stage"] == "composing"
     assert nxt["loop_id"] == "blast-155-8"
     assert nxt["bars"] == 8
+
+
+def test_historical_results_require_participation_after_leaving(
+    client: TestClient, clock: FrozenClock
+) -> None:
+    host = guest(client, "Author")
+    voter = guest(client, "Voter")
+    spectator = guest(client, "Spectator")
+    outsider = guest(client, "Outsider")
+    room = create_room(client, host)
+    for participant in (voter, spectator):
+        join(client, participant, str(room["code"]))
+    item = start(client, host, str(room["id"]))
+    riff = save(client, host, str(item["id"]))
+    url = f"/api/v1/rounds/{item['id']}"
+    assert client.get(url, headers=outsider).status_code == 404
+    clock.advance(300)
+    assert (
+        client.post(f"{url}/votes", headers=voter, json={"riff_id": riff["id"]}).status_code == 201
+    )
+    for participant in (spectator, voter, host):
+        assert (
+            client.delete(f"/api/v1/rooms/{room['id']}/membership", headers=participant).status_code
+            == 204
+        )
+    # Former participants cannot bypass voting anonymity by opening old URLs.
+    assert client.get(url, headers=host).status_code == 404
+    assert client.get(url, headers=voter).status_code == 404
+    clock.advance(300)
+    for participant in (host, voter):
+        response = client.get(url, headers=participant)
+        assert response.status_code == 200, response.text
+        assert response.json()["stage"] == "results"
+        assert response.json()["votes_count"] == 1
+    for participant in (spectator, outsider):
+        assert client.get(url, headers=participant).status_code == 404
+    assert (
+        client.post(f"{url}/votes", headers=voter, json={"riff_id": riff["id"]}).status_code == 404
+    )
+
+
+@pytest.mark.parametrize("with_riffs", [False, True])
+def test_results_without_votes(client: TestClient, clock: FrozenClock, with_riffs: bool) -> None:
+    host = guest(client, "Host")
+    other = guest(client, "Other")
+    third = guest(client, "Third")
+    room = create_room(client, host)
+    join(client, other, str(room["code"]))
+    join(client, third, str(room["code"]))
+    item = start(client, host, str(room["id"]))
+    riffs = (
+        [save(client, author, str(item["id"])) for author in (host, other)] if with_riffs else []
+    )
+    clock.advance(600)
+    result = client.get(f"/api/v1/rounds/{item['id']}", headers=host).json()
+    assert result["stage"] == "results"
+    assert result["votes_count"] == 0
+    assert set(result["winner_ids"]) == {riff["id"] for riff in riffs}
+    assert all(riff["is_winner"] and riff["votes"] == 0 for riff in result["riffs"])
 
 
 def test_join_is_closed_during_a_round_and_host_role_moves_on(

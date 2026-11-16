@@ -43,14 +43,15 @@ def app_client(clock: Clock | None = None, mailer: Mailer | None = None) -> Test
             sessions=MemorySessionStore(),
             clock=clock or Clock(),
             mailer=mailer or Mailer(),
-        )
+        ),
+        headers={"X-CSRF-Protection": "1"},
     )
 
 
 def auth(client: TestClient, nickname: str) -> dict[str, str]:
     response = client.post("/api/v1/session/guest", json={"nickname": nickname})
     assert response.status_code == 201, response.text
-    return {"Authorization": f"Bearer {response.json()['token']}"}
+    return {"Cookie": f"riff_session={response.cookies['riff_session']}"}
 
 
 def test_email_identity_and_password_reset() -> None:
@@ -251,7 +252,7 @@ def test_private_room_and_profile_history_survives_closure() -> None:
             },
         )
         assert registered.status_code == 201, registered.text
-        host = {"Authorization": f"Bearer {registered.json()['token']}"}
+        host = {"Cookie": f"riff_session={registered.cookies['riff_session']}"}
         other = auth(client, "Гость")
         third = auth(client, "Третий")
         room_response = client.post(

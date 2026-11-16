@@ -73,6 +73,7 @@ class RoundView:
     riffs: tuple[RiffView, ...] | None
     your_vote_riff_id: UUID | None
     winner_ids: tuple[UUID, ...] | None
+    votes_count: int = 0
 
 
 @dataclass(frozen=True, slots=True)
