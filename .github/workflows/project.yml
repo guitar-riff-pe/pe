@@ -43,7 +43,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate Compose
-        run: docker compose config --quiet
+        run: |
+          python3 scripts/setup-local-env.py
+          docker compose config --quiet
       - name: Build and wait for all healthchecks
         run: docker compose up --build --wait --wait-timeout 180
       - name: Verify application users

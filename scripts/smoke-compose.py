@@ -3,8 +3,10 @@
 import json
 import os
 from html.parser import HTMLParser
+from http.cookiejar import CookieJar
+from urllib.error import HTTPError
 from urllib.parse import urljoin
-from urllib.request import urlopen
+from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
 
 
 class Page(HTMLParser):
@@ -34,13 +36,44 @@ def main() -> None:
         html = response.read().decode()
     page = Page()
     page.feed(html)
-    assert "pe-backend" in "".join(page.text), "SSR did not render the API response"
+    assert "Создавай риффы." in "".join(page.text), "SSR did not render the home page"
     assert page.assets, "No client assets in the rendered document"
     for asset in sorted(page.assets):
         with urlopen(urljoin(frontend, asset), timeout=10) as response:
             assert response.status == 200, asset
             assert response.read(), f"Empty asset: {asset}"
-    print(f"API, SSR and {len(page.assets)} static assets passed")
+    api = backend.removesuffix("/health")
+    cookies = CookieJar()
+    browser = build_opener(HTTPCookieProcessor(cookies))
+    with browser.open(
+        Request(
+            f"{api}/session/guest",
+            data=json.dumps({"nickname": "SmokeGuest"}).encode(),
+            headers={"Content-Type": "application/json", "X-CSRF-Protection": "1"},
+        ),
+        timeout=10,
+    ) as response:
+        guest = json.load(response)
+    assert "token" not in guest and guest["player"]["kind"] == "guest"
+    assert any(cookie.name == "riff_session" for cookie in cookies)
+    with browser.open(f"{api}/session/me", timeout=10) as response:
+        assert json.load(response)["id"] == guest["player"]["id"]
+    with browser.open(
+        Request(
+            f"{api}/auth/logout", method="POST", headers={"X-CSRF-Protection": "1"}
+        ),
+        timeout=10,
+    ) as response:
+        assert response.status == 204
+    try:
+        browser.open(f"{api}/session/me", timeout=10)
+    except HTTPError as error:
+        assert error.code == 401
+    else:
+        raise AssertionError("Logged-out session still authenticated")
+    print(
+        f"API, JWT cookie login/logout, SSR and {len(page.assets)} static assets passed"
+    )
 
 
 if __name__ == "__main__":

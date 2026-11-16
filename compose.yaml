@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api/v1}
+        VITE_API_URL: ${VITE_API_URL:-}
     environment:
       API_INTERNAL_URL: http://backend:8000/api/v1
     ports:
@@ -15,6 +15,9 @@ services:
       backend:
         condition: service_healthy
     init: true
+    healthcheck:
+      timeout: 30s
+      start_period: 60s
     restart: unless-stopped
 
   backend:
@@ -28,6 +31,8 @@ services:
       PE_DATABASE_URL: postgresql://${POSTGRES_USER:-pe}:${POSTGRES_PASSWORD:-pe_local_password}@postgres:5432/${POSTGRES_DB:-pe}
       PE_REDIS_URL: redis://redis:6379/0
       PE_INIT_DB: "true"
+      PE_JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env to a random signing key}
+      PE_AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
     ports:
       - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     depends_on:
@@ -36,6 +41,9 @@ services:
       redis:
         condition: service_healthy
     init: true
+    healthcheck:
+      timeout: 30s
+      start_period: 60s
     restart: unless-stopped
 
   postgres:

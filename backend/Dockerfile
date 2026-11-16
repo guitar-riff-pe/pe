@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM python:3.12-slim-bookworm AS build
-COPY --from=ghcr.io/astral-sh/uv:0.8.18 /uv /uvx /bin/
+RUN python -m pip install --no-cache-dir uv==0.8.18
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never
 WORKDIR /app
 COPY backend/pyproject.toml backend/uv.lock ./
