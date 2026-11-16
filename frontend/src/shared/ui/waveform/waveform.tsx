@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import styles from './waveform.module.scss'
 
 type WaveformProps = {
@@ -8,11 +9,13 @@ type WaveformProps = {
   className?: string
 }
 
-export function Waveform({ bars = 90, seed = 1, minHeight = 5, maxHeight = 40, className }: WaveformProps) {
-  return <div className={[styles.waveform, className].filter(Boolean).join(' ')} aria-hidden="true">
-    {Array.from({ length: bars }, (_, index) => {
+export const Waveform = memo(function Waveform({ bars = 90, seed = 1, minHeight = 5, maxHeight = 40, className }: WaveformProps) {
+  const path = useMemo(() => Array.from({ length: bars }, (_, index) => {
       const height = minHeight + Math.abs(Math.sin((index + seed * 3) * .34) * Math.cos((index + seed) * .18)) * (maxHeight - minHeight)
-      return <span key={index} style={{ height: `${height}px` }} />
-    })}
-  </div>
-}
+      return `M${index * 4} ${(maxHeight - height) / 2}h2v${height}h-2z`
+    }).join(''), [bars, seed, minHeight, maxHeight])
+  return <svg className={[styles.waveform, className].filter(Boolean).join(' ')} aria-hidden="true" focusable="false"
+    viewBox={`0 0 ${Math.max(1, bars * 4 - 2)} ${maxHeight}`} preserveAspectRatio="none" height={maxHeight}>
+    <path d={path} />
+  </svg>
+})
