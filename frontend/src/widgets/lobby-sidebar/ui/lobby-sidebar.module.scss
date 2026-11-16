@@ -4,15 +4,18 @@
 .invite h2 { margin: 0 0 18px; font-size: 24px; }
 .codeLabel { margin: 0 0 8px; color: var(--color-text-secondary); font-size: 14px; }
 .code { margin: 0 0 16px; color: var(--color-text); font-size: 36px; font-weight: 800; letter-spacing: .02em; line-height: 1.2; user-select: all; }
-.copyActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.copyActions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.mobileText { display: none; }
 .copyActions button { justify-content: flex-start; white-space: nowrap; }
 .round { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--color-border-subtle); }
+.round > button { justify-content: flex-start; }
 .settings { margin: 0 0 10px; font-size: 17px; }
 .description, .hostNote { color: var(--color-text-secondary); font-size: 14px; }
 .description { margin: 0 0 32px; }
 .hostNote { margin: 20px 0 0; }
 .feedback { margin: 16px 0 0; color: var(--color-text-secondary); font-size: 13px; }
 .feedback a { color: var(--color-danger); }
+.continue { display: inline-flex; min-height: 48px; align-items: center; margin-top: 12px; color: var(--color-text); font-size: 14px; }
 
 @include mixins.tablet {
   .panel { padding: 20px; }
@@ -21,16 +24,19 @@
 }
 @include mixins.mobile {
   .panel { display: contents; }
-  .invite { order: 1; padding: 15px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+  .invite { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; order: 1; padding: 15px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
   .invite h2 { display: none; }
-  .code { margin-bottom: 14px; font-size: 30px; }
-  .copyActions { gap: 16px; }
-  .copyActions button { min-height: 48px; justify-content: flex-start; padding-inline: 15px; font-size: 14px; }
+  .codeLabel { grid-column: 1; margin: 0; font-size: 10px; text-transform: uppercase; }
+  .code { grid-column: 1; margin: 0; font-size: 30px; }
+  .copyActions { grid-column: 2; grid-row: 1 / 3; }
+  .copyActions button { min-height: 48px; justify-content: flex-start; padding-inline: 0; border: 0; background: transparent; color: var(--color-danger); font-size: 12px; }
   .desktopText { display: none; }
+  .mobileText { display: inline; }
   .round { display: flex; flex-direction: column; order: 3; margin-top: 0; padding-top: 0; border: 0; }
-  .settings { order: 1; margin-bottom: 0; font-size: 15px; }
-  .description { display: none; }
-  .hostNote { order: 2; margin: 18px 0 34px; }
-  .round button { order: 3; margin-top: 0; }
-  .feedback { order: 4; margin: -18px 0 0; }
+  .settings { order: 1; margin-bottom: 0; padding: 16px 16px 0; border-radius: 6px 6px 0 0; background: var(--color-surface-raised); font-size: 15px; }
+  .description { display: block; order: 2; padding: 8px 16px 16px; margin: 0; border-radius: 0 0 6px 6px; background: var(--color-surface-raised); font-size: 12px; }
+  .hostNote { order: 5; margin: 20px 0 0; font-size: 12px; }
+  .round button { order: 4; margin-top: 32px; }
+  .round .continue { order: 3; }
+  .feedback { order: 4; margin: 0; }
 }

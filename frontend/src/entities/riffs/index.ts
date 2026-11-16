@@ -1,1 +1,6 @@
 export { useDemoRiffPlayer } from './model/use-demo-riff-player'
+export type { RiffNote } from './model/riff-note'
+export { getNoteName } from './model/riff-note'
+export { encodeRiff, decodeNotes, RIFF_TICKS_PER_BEAT } from './model/riff-payload'
+export type { RiffTimbre, RiffPayload, SavedRiff, ApiNote } from './model/riff-payload'
+export { saveRiff } from './api/save-riff'

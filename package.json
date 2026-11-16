@@ -2,7 +2,9 @@
   "name": "pe-monorepo",
   "private": true,
   "packageManager": "pnpm@10.14.0",
-  "engines": { "node": ">=22.18.0" },
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "dev": "pnpm --filter @pe/frontend dev",
     "dev:backend": "uv run --project backend uvicorn app.main:app --app-dir backend/src --reload --port 8000",
@@ -17,5 +19,10 @@
     "lighthouse:check": "pnpm --filter @pe/frontend lighthouse:check",
     "storybook": "pnpm --filter @pe/frontend storybook",
     "storybook:build": "pnpm --filter @pe/frontend storybook:build"
+  },
+  "dependencies": {
+    "konva": "^10.9.1",
+    "react-konva": "^19.3.2",
+    "tone": "^15.1.22"
   }
 }

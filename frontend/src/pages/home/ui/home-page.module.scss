@@ -61,6 +61,8 @@
 .invitation h2 { margin: 0 0 4px; font-size: 20px; }
 .invitation p { margin: 0; color: var(--color-text-muted); font-size: 14px; }
 .invitationControls { display: grid; grid-template-columns: minmax(0, 1fr) 214px; align-items: end; gap: 16px; }
+.invitationControls > form { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) 214px; align-items: end; gap: 16px; }
+.invitationControls > form > p { grid-column: 1 / -1; }
 .invitationControls :global(button) { min-height: 48px; }
 .invitationControls :global(label) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; padding: 46px 4px 0; }
@@ -89,6 +91,7 @@
   .invitation { display: block; margin-top: 44px; padding: 20px; }
   .invitation h2 { font-size: 18px; }
   .invitationControls { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; }
+  .invitationControls > form { grid-template-columns: 1fr; }
   .invitationControls :global(label) { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
   .steps { display: grid; grid-template-columns: 1fr; gap: 24px; padding-top: 36px; }
   .step { gap: 20px; }

@@ -8,8 +8,12 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{ts,tsx,js,mjs}'],
+    files: ['**/*.{ts,tsx,js,mjs,cjs}'],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
+  },
+  {
+    files: ['test/browser/**/*.cjs'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
     files: ['src/**/*.{ts,tsx}'],

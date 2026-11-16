@@ -1,1 +1,1 @@
-export { apiGet } from './client'
+export { apiGet, apiRequest, ApiError } from './client'

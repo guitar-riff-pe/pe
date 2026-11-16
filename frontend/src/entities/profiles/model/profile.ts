@@ -17,3 +17,9 @@ export type ProfileBattle = {
 }
 
 export type BestRound = { title: string; place: number; votes: number; date: string }
+
+export type ProfileRecord = PlayerProfile & {
+  weekStarts: string[]
+  bestRound: ProfileBattle | null
+  history: ProfileBattle[]
+}

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button, TextField } from '@shared/ui'
+import { apiRequest } from '@shared/api'
 import { isValidEmail } from '../model/validation'
 import styles from './account-access.module.scss'
 
@@ -8,8 +9,9 @@ export function RecoveryForm() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [pending, setPending] = useState(false)
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!isValidEmail(email)) {
       setError('Введи корректную электронную почту.')
@@ -17,7 +19,12 @@ export function RecoveryForm() {
       return
     }
     setError('')
-    setNotice('Отправка ссылок пока недоступна: почтовый сервис ещё не подключён.')
+    setPending(true); setNotice('')
+    try {
+      await apiRequest<void>('/auth/password-reset/request', { method: 'POST', body: JSON.stringify({ email: email.trim() }) })
+      setNotice('Если аккаунт с этой почтой существует, мы отправили ссылку для смены пароля.')
+    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Не удалось отправить письмо.') }
+    finally { setPending(false) }
   }
 
   return (
@@ -34,7 +41,7 @@ export function RecoveryForm() {
           error={error}
           onChange={(event) => { setEmail(event.target.value); setError(''); setNotice('') }}
         />
-        <Button className={styles.submit} type="submit" fullWidth>Отправить ссылку</Button>
+        <Button className={styles.submit} type="submit" fullWidth pending={pending}>Отправить ссылку</Button>
         {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
       </form>
       <Link className={styles.backLink} to="/login">Вернуться ко входу</Link>

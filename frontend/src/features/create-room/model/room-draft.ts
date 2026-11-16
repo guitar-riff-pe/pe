@@ -20,7 +20,9 @@ export const playerOptions = [
 
 export function validateRoomName(value: string) {
   const name = value.trim()
+  const length = Array.from(name).length
   if (!name) return 'Введите название комнаты'
-  if (name.length < 3) return 'Название должно содержать минимум 3 символа'
+  if (length < 3) return 'Название должно содержать минимум 3 символа'
+  if (length > 40) return 'Название должно содержать не больше 40 символов'
   return undefined
 }

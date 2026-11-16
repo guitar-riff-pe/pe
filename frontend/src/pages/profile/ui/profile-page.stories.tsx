@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/tanstack-react'
-import { ProfilePage } from './profile-page'
+import { ProfilePageView } from './profile-page'
+import { demoProfile, demoBattles, demoBestRound } from '../model/demo-profile'
 
-const meta = { title: 'Pages/Profile', component: ProfilePage, parameters: { layout: 'fullscreen', tanstack: { router: { path: '/profile' } } } } satisfies Meta<typeof ProfilePage>
+const meta = {
+  title: 'Pages/Profile', component: ProfilePageView,
+  args: { profile: demoProfile, battles: demoBattles, bestRound: demoBestRound, onSave: async () => {} },
+  parameters: { layout: 'fullscreen', tanstack: { router: { route: { path: '/profile' }, path: '/profile' } } },
+} satisfies Meta<typeof ProfilePageView>
 export default meta
 type Story = StoryObj<typeof meta>
 export const Desktop: Story = {}

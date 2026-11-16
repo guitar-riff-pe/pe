@@ -1,0 +1,28 @@
+@use '@mixins' as mixins;
+
+.page { width: min(100% - 80px, 1440px); max-width: none; padding: 22px 0 32px; }
+.intro { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.intro h1, .page > h1 { margin: 0; font-size: 32px; line-height: 1.3; }
+.intro p { margin: 10px 0 0; color: var(--color-text-secondary); font-size: 14px; }
+.intro .timer { flex-shrink: 0; margin: 0; color: var(--color-danger); font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.urgent { text-shadow: 0 0 24px #c91f4150; }
+.localBadge { padding: 8px 12px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); color: var(--color-text-secondary); font-size: 13px; white-space: nowrap; }
+.footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; margin-top: 12px; border-top: 1px solid var(--color-border-subtle); }
+.footer p { margin: 0; font-size: 14px; }
+.draft { color: var(--color-text-secondary); }
+.saved { color: var(--color-success); }
+.footer .error { margin-top: 8px; color: var(--color-danger); }
+.submit { flex-shrink: 0; min-width: 280px; }
+.back { display: inline-block; margin-top: 24px; color: var(--color-text-secondary); font-size: 13px; text-decoration: none; }
+.notice { margin: 20px 0; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-text-secondary); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+.actions a { color: var(--color-text); }
+
+@include mixins.mobile {
+  .page { width: calc(100% - 32px); padding: 20px 0 110px; }
+  .intro { flex-direction: column; gap: 16px; margin-bottom: 24px; }
+  .intro h1 { font-size: 28px; }
+  .intro .timer { font-size: 24px; }
+  .footer { flex-direction: column; align-items: stretch; gap: 16px; }
+  .submit { width: 100%; min-width: 0; }
+}

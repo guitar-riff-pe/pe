@@ -1,14 +1,17 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useSearch } from '@tanstack/react-router'
 import { Button, PasswordField, TextField } from '@shared/ui'
 import { isValidEmail } from '../model/validation'
+import { useAuthAction } from '../model/use-auth-action'
+import { GuestAccess } from './guest-access'
 import styles from './account-access.module.scss'
 
 export function SignInForm() {
+  const search = useSearch({ strict: false })
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
-  const [notice, setNotice] = useState('')
+  const action = useAuthAction()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -17,7 +20,7 @@ export function SignInForm() {
       password: password ? undefined : 'Введи пароль.',
     }
     setErrors(nextErrors)
-    setNotice(nextErrors.email || nextErrors.password ? '' : 'Вход пока недоступен: сервер авторизации ещё не подключён.')
+    if (!nextErrors.email && !nextErrors.password) void action.submit('/auth/login', { email: email.trim(), password })
   }
 
   return (
@@ -32,7 +35,7 @@ export function SignInForm() {
           placeholder="you@example.com"
           value={email}
           error={errors.email}
-          onChange={(event) => { setEmail(event.target.value); setErrors((current) => ({ ...current, email: undefined })); setNotice('') }}
+          onChange={(event) => { setEmail(event.target.value); setErrors((current) => ({ ...current, email: undefined })) }}
         />
         <PasswordField
           label="Пароль"
@@ -40,23 +43,14 @@ export function SignInForm() {
           placeholder="Введите пароль"
           value={password}
           error={errors.password}
-          onChange={(event) => { setPassword(event.target.value); setErrors((current) => ({ ...current, password: undefined })); setNotice('') }}
+          onChange={(event) => { setPassword(event.target.value); setErrors((current) => ({ ...current, password: undefined })) }}
         />
         <Link className={styles.forgotLink} to="/forgot-password">Забыли пароль?</Link>
-        <Button className={styles.submit} type="submit" fullWidth>Войти</Button>
-        {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
+        <Button className={styles.submit} type="submit" fullWidth pending={action.pending}>Войти</Button>
+        {action.error ? <p className={styles.notice} role="alert">{action.error}</p> : null}
       </form>
-      <p className={styles.switch}>Нет аккаунта? <Link to="/register">Регистрация</Link></p>
+      <p className={styles.switch}>Нет аккаунта? <Link to="/register" search={{ redirect: search.redirect }}>Регистрация</Link></p>
       <GuestAccess />
     </>
-  )
-}
-
-export function GuestAccess() {
-  return (
-    <div className={styles.guest}>
-      <Link className={styles.guestLink} to="/rooms">Продолжить гостем</Link>
-      <p className={styles.guestNote}>Гости участвуют наравне со всеми.<br />Статистика доступна после входа.</p>
-    </div>
   )
 }

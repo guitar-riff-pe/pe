@@ -1,5 +1,7 @@
 export type Room = {
   id: string
+  code?: string
+  members?: { id: string }[]
   name: string
   style: 'Rock' | 'Metal' | 'Indie' | 'Любой стиль'
   bpm: number
