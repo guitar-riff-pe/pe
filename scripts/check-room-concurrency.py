@@ -4,8 +4,6 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from uuid import uuid4
 
-from sqlalchemy import create_engine, text
-
 from app.core.config import Settings
 from app.domain.errors import AppError
 from app.domain.models import Player
@@ -14,16 +12,17 @@ from app.infrastructure.repositories.sql import SqlStore, normalize_database_url
 from app.services.clock import SystemClock
 from app.services.room import RoomService
 from app.services.round import RoundService
+from sqlalchemy import create_engine, text
 
 
 def main():
     url = normalize_database_url(Settings().database_url)
-    assert url.startswith('postgresql+psycopg://')
-    schema = 'audit_' + uuid4().hex
+    assert url.startswith("postgresql+psycopg://")
+    schema = "audit_" + uuid4().hex
     admin = create_engine(url)
     with admin.begin() as connection:
         connection.execute(text(f'CREATE SCHEMA "{schema}"'))
-    engine = create_engine(url, connect_args={'options': f'-csearch_path={schema}'})
+    engine = create_engine(url, connect_args={"options": f"-csearch_path={schema}"})
     store = SqlStore(url)
     store._engine = engine
     store._ready = True
@@ -34,7 +33,10 @@ def main():
         rounds = RoundService(store, clock, compose_seconds=300, vote_seconds=300)
 
         def setup():
-            players = [Player(id=uuid4(), nickname=f'Player {i}', account_id=None) for i in range(3)]
+            players = [
+                Player(id=uuid4(), nickname=f"Player {i}", account_id=None)
+                for i in range(3)
+            ]
             with store.transaction() as tx:
                 for player in players:
                     tx.add_player(player, clock.now())
@@ -58,7 +60,7 @@ def main():
                 assert entered.wait(5)
                 try:
                     future.result(timeout=0.5)
-                    raise AssertionError('leave did not wait for the room lock')
+                    raise AssertionError("leave did not wait for the room lock")
                 except TimeoutError:
                     pass
                 tx.delete_membership(room.id, players[0].id)
@@ -67,7 +69,7 @@ def main():
             current = rooms.get(players[2], room.id)
             assert current.host_id == players[2].id
             assert len(current.members) == 1
-            print('PASS concurrent departures preserve a remaining host')
+            print("PASS concurrent departures preserve a remaining host")
 
             players, room = setup()
             entered.clear()
@@ -82,16 +84,16 @@ def main():
                 assert entered.wait(5)
                 try:
                     future.result(timeout=0.5)
-                    raise AssertionError('start did not wait for the room lock')
+                    raise AssertionError("start did not wait for the room lock")
                 except TimeoutError:
                     pass
                 tx.delete_membership(room.id, players[2].id)
             try:
                 future.result(timeout=10)
-                raise AssertionError('round started with fewer than three players')
+                raise AssertionError("round started with fewer than three players")
             except AppError as error:
                 assert error.status == 409
-            print('PASS start checks membership after concurrent departure commits')
+            print("PASS start checks membership after concurrent departure commits")
     finally:
         engine.dispose()
         with admin.begin() as connection:
@@ -99,5 +101,5 @@ def main():
         admin.dispose()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
