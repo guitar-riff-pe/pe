@@ -12,7 +12,7 @@
     "typecheck": "pnpm --filter @pe/frontend typecheck",
     "lint": "pnpm --filter @pe/frontend lint",
     "lint:fsd": "pnpm --filter @pe/frontend lint:fsd",
-    "lint:backend": "uv run --project backend ruff check backend",
+    "lint:backend": "uv run --project backend --locked ruff check backend scripts && uv run --project backend --locked ruff format --check backend scripts",
     "test:backend": "uv run --project backend pytest backend/tests",
     "test:frontend": "pnpm --filter @pe/frontend test",
     "lighthouse": "pnpm --filter @pe/frontend lighthouse",
