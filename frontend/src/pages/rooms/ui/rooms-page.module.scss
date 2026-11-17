@@ -22,7 +22,7 @@
   min-width: 240px;
   min-height: 48px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 10px 16px;
   border-radius: var(--radius-control);
   background: var(--color-primary);
@@ -38,6 +38,14 @@
 .note { margin: 44px 0 12px; color: var(--color-text-secondary); font-size: 13px; }
 .homeLink { color: var(--color-text-secondary); font-size: 14px; text-decoration: none; }
 .homeLink:hover { color: var(--color-text); }
+.current { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+.current p { margin: 0; }
+.current a { font-size: 14px; }
+.notice { margin-bottom: 24px; }
+.notice p { color: var(--color-danger); }
+.join { margin-top: 40px; max-width: 640px; }
+.join summary { color: var(--color-text-secondary); font-size: 14px; cursor: pointer; }
+.join[open] summary { margin-bottom: 20px; }
 
 @include mixins.mobile {
   .page { width: calc(100% - 40px); padding: 32px 0 110px; }

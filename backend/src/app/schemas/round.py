@@ -58,6 +58,7 @@ class RoundOut(BaseModel):
     riffs: list[RiffOut] | None
     your_vote_riff_id: UUID | None
     winner_ids: list[UUID] | None
+    votes_count: int
 
 
 def notes_in(items: list[NoteIn]) -> list[Note]:
@@ -133,4 +134,5 @@ def round_out(view: RoundView) -> RoundOut:
         riffs=riffs,
         your_vote_riff_id=view.your_vote_riff_id,
         winner_ids=winners,
+        votes_count=view.votes_count,
     )

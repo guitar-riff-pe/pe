@@ -69,4 +69,4 @@ class RedisSessionStore:
 
     @staticmethod
     def _key(token: str) -> str:
-        return f"pe:session:{token}"
+        return f"pe:jwt-session:{token}"

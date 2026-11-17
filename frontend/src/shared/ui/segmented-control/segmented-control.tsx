@@ -10,13 +10,14 @@ type SegmentedControlProps = {
   value: string
   onValueChange: (value: string) => void
   hint?: string
+  disabled?: boolean
 }
 
-export function SegmentedControl({ label, name, options, value, onValueChange, hint }: SegmentedControlProps) {
+export function SegmentedControl({ label, name, options, value, onValueChange, hint, disabled }: SegmentedControlProps) {
   const id = useId()
 
   return (
-    <fieldset className={styles.field}>
+    <fieldset className={styles.field} disabled={disabled}>
       <legend className={styles.legend}>{label}</legend>
       <div className={styles.options}>
         {options.map((option) => (

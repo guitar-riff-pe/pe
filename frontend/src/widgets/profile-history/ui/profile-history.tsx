@@ -7,6 +7,7 @@ export function ProfileHistory({ battles, expanded, onToggle }: ProfileHistoryPr
   const title = expanded ? 'История баттлов' : 'Последние баттлы'
   return <section className={styles.history} aria-label={title}>
     <h2>{title}</h2>
+    {!battles.length && <p>История появится после первого завершённого баттла.</p>}
     <div className={styles.battles} role="list">{(expanded ? battles : battles.slice(0, 2)).map((battle) => <BattleRow key={battle.id} battle={battle} />)}</div>
     <button className={styles.action} type="button" onClick={onToggle}>{expanded ? 'К обзору' : 'Вся история'} <span aria-hidden="true">→</span></button>
   </section>

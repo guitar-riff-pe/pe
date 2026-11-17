@@ -1,0 +1,10 @@
+Parker Fly electric guitar recordings — ClueSurf / wavebase
+
+Source: https://github.com/cluesurf/wavebase
+Pinned revision: 0c7183fd66fb68e5343d37f2eeebdf40cc7c570e
+Upstream declares sound files Public Domain (see UPSTREAM-README.md, License section).
+This is the upstream public-domain declaration, not a claim of a separate CC0 license.
+49 unmodified WAVs cover MIDI 40–88 (E2–E6). First take per note; the lowest
+available fret is chosen where several strings record the same pitch.
+Only local filenames are changed. Git LFS content hashes are preserved in manifest.json.
+Playback applies volume and short attack/release envelopes.

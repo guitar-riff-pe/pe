@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.csrf import CsrfMiddleware
 from app.api.errors import app_error_handler
 from app.api.router import api_router
 from app.core.config import Settings, get_settings
@@ -46,12 +47,13 @@ def create_app(
         settings.smtp_password,
     )
     application.add_exception_handler(AppError, app_error_handler)
+    application.add_middleware(CsrfMiddleware)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_credentials=False,
+        allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization"],
+        allow_headers=["Content-Type", "X-CSRF-Protection"],
     )
     application.include_router(api_router, prefix="/api/v1")
     return application

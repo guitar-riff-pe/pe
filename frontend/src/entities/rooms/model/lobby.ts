@@ -10,7 +10,7 @@ export type LobbyRoom = {
   code: string
   capacity: number
   bpm: number
-  bars: number
+  bars: number | null
   roundMinutes: number
   participants: RoomParticipant[]
 }

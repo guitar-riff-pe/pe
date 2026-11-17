@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { RiffPreview } from '@widgets/riff-preview'
 import { SiteHeader } from '@widgets/site-header'
-import { Button, Surface, TextField } from '@shared/ui'
+import { Surface } from '@shared/ui'
+import { JoinRoomForm } from '@features/join-room'
 import styles from './home-page.module.scss'
 
 const steps = [
@@ -32,8 +33,7 @@ export function HomePage() {
             <p>Введи код комнаты и присоединяйся к друзьям.</p>
           </div>
           <div className={styles.invitationControls}>
-            <TextField label="Код комнаты" placeholder="Например, X7K2M9" disabled />
-            <Button disabled title="Вход по коду появится после подключения комнат">Войти <span aria-hidden="true">→</span></Button>
+            <JoinRoomForm />
           </div>
         </Surface>
 

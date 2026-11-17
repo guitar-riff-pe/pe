@@ -24,6 +24,7 @@ class PlayerRow(Base):
 
     id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True)
     nickname: Mapped[str] = mapped_column(String(32))
+    session_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     account_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("accounts.id"), unique=True
     )

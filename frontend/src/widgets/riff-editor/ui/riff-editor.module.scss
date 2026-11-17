@@ -1,0 +1,80 @@
+.editor {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.heading {
+  margin: 0;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.tools { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+
+.playback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 12px 16px 0;
+}
+
+.control {
+  display: grid;
+  gap: 4px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+
+  input { accent-color: var(--color-danger); }
+  input[type='number'] {
+    width: 88px;
+    padding: 7px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font: inherit;
+  }
+}
+
+.playbackStatus { color: var(--color-text-secondary); font-size: 12px; }
+.error { margin: 12px 16px 0; color: var(--color-danger); font-size: 13px; }
+.credits { margin: 0; padding: 0 16px 12px; color: var(--color-text-muted); font-size: 11px; }
+
+.roundEditor { border: 0; border-radius: 0; background: transparent; }
+.roundEditor .playback { padding: 0 0 24px; }
+.roundEditor .credits { padding: 12px 0; text-align: right; }
+.metadata, .gridStep { color: var(--color-text-secondary); font-size: 14px; }
+.gridStep { margin-left: auto; }
+.studio { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 24px; align-items: start; }
+.instrument { display: grid; gap: 28px; padding: 20px 16px; background: var(--color-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); }
+.timbre { display: grid; gap: 12px; min-width: 0; padding: 0; margin: 0; border: 0; }
+.timbre legend { padding: 0 4px 20px; font-size: 16px; font-weight: 700; }
+.timbre label { display: flex; align-items: center; gap: 8px; padding: 14px 12px; min-height: 48px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface-raised); font-size: 14px; font-weight: 600; cursor: pointer; }
+.timbre .activeTimbre { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
+.timbre input { margin: 0; accent-color: var(--color-text); }
+.timbre label:focus-within { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.timbre:disabled { opacity: .6; }
+.instrument input[type='range'] { width: 100%; min-width: 0; margin: 14px 0 0; }
+.tracks { min-width: 0; }
+.drums { --waveform-color: var(--color-text-muted); display: grid; gap: 14px; padding: 0 16px 0 12px; color: var(--color-text-secondary); font-size: 14px; }
+.drums > span { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.loopTitle { color: var(--color-text-muted); font-size: 12px; }
+.studio .tools { padding: 12px; }
+.studio .tools button { min-height: 32px; padding: 6px 12px; font-size: 12px; }
+
+@media (max-width: 760px) {
+  .studio { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .instrument { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .timbre { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+  .timbre legend { padding-bottom: 12px; }
+  .instrument > button { align-self: end; }
+  .gridStep { margin-left: 0; }
+  .roundEditor .credits { text-align: left; }
+  .drums { padding: 0 4px; }
+}

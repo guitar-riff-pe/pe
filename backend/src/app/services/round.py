@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from uuid import UUID, uuid4
 
 from app.domain.catalog import default_loop_for_bars, get_loop
-from app.domain.errors import conflict, forbidden, invalid
+from app.domain.errors import conflict, forbidden, invalid, not_found
 from app.domain.models import Player, Round
+from app.domain.ranking import rank_scores
 from app.domain.store import Store, Tx
 from app.domain.views import RiffView, RoundView
-from app.services.access import require_room_member, require_round_member
+from app.services.access import require_room_member
 from app.services.clock import Clock
 from app.services.rules import stage_at
 
@@ -34,7 +35,7 @@ class RoundService:
     def start(self, player: Player, room_id: UUID, loop_id: str | None) -> RoundView:
         now = self._clock.now()
         with self._store.transaction() as tx:
-            room = require_room_member(tx, room_id, player.id)
+            room = require_room_member(tx, room_id, player.id, lock=True)
             loop = default_loop_for_bars(room.bars) if loop_id is None else get_loop(loop_id)
             if loop is None:
                 raise invalid("Такого барабанного лупа нет")
@@ -65,7 +66,16 @@ class RoundService:
     def get(self, player: Player, round_id: UUID) -> RoundView:
         now = self._clock.now()
         with self._store.transaction() as tx:
-            item = require_round_member(tx, round_id, player.id)
+            item = tx.get_round(round_id)
+            if item is None:
+                raise not_found("Раунд не найден")
+            if not tx.has_member(item.room_id, player.id):
+                participated = stage_at(item, now) == "results" and (
+                    any(riff.author_id == player.id for riff in tx.list_riffs(item.id))
+                    or tx.vote_by_voter(item.id, player.id) is not None
+                )
+                if not participated:
+                    raise not_found("Раунд не найден")
             return self._view(tx, item, player.id, now)
 
     def _view(self, tx: Tx, item: Round, player_id: UUID, now: datetime) -> RoundView:
@@ -74,6 +84,7 @@ class RoundService:
         riffs = tx.list_riffs(item.id)
         own = next((riff for riff in riffs if riff.author_id == player_id), None)
         ballot = tx.vote_by_voter(item.id, player_id)
+        votes = tx.list_votes(item.id)
         public: tuple[RiffView, ...] | None
         winners: tuple[UUID, ...] | None
         if stage == "composing":
@@ -91,15 +102,12 @@ class RoundService:
             )
             winners = None
         else:
-            votes = tx.list_votes(item.id)
             counts = {riff.id: 0 for riff in riffs}
             for vote in votes:
                 if vote.riff_id in counts:
                     counts[vote.riff_id] += 1
-            best = max(counts.values()) if counts else None
-            winners = tuple(
-                riff.id for riff in riffs if best is not None and counts[riff.id] == best
-            )
+            places = rank_scores(counts)
+            winners = tuple(riff.id for riff in riffs if places[riff.id] == 1)
             authors = tx.players_by_ids([riff.author_id for riff in riffs])
             public = tuple(
                 RiffView(
@@ -141,4 +149,5 @@ class RoundService:
             riffs=public,
             your_vote_riff_id=None if ballot is None else ballot.riff_id,
             winner_ids=winners,
+            votes_count=len(votes),
         )

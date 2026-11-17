@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from app.domain.errors import conflict, forbidden, not_found
 from app.domain.models import Player
+from app.domain.ranking import rank_scores
 from app.domain.store import Store
 from app.domain.views import ProfileBattleView, ProfileView
 from app.services.clock import Clock
@@ -21,14 +22,12 @@ class ProfileService:
             if account is None:
                 raise not_found("Профиль не найден")
             history: list[ProfileBattleView] = []
-            for room, round_item, riff in tx.completed_riffs_by_author(player.id, now):
-                riffs = tx.list_riffs(round_item.id)
-                counts = {item.id: 0 for item in riffs}
-                for vote in tx.list_votes(round_item.id):
-                    if vote.riff_id in counts:
-                        counts[vote.riff_id] += 1
+            completed = tx.completed_riffs_by_author(player.id, now)
+            scores = tx.round_scores([item.id for _, item, _ in completed])
+            for room, round_item, riff in completed:
+                counts = scores[round_item.id]
                 votes = counts.get(riff.id, 0)
-                place = 1 + sum(count > votes for count in counts.values())
+                place = rank_scores(counts)[riff.id]
                 history.append(
                     ProfileBattleView(
                         id=round_item.id,

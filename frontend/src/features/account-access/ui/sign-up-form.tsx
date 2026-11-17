@@ -1,26 +1,28 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useSearch } from '@tanstack/react-router'
 import { Button, PasswordField, TextField } from '@shared/ui'
 import { isValidEmail, isValidNickname, isValidPassword } from '../model/validation'
-import { GuestAccess } from './sign-in-form'
+import { useAuthAction } from '../model/use-auth-action'
+import { GuestAccess } from './guest-access'
 import styles from './account-access.module.scss'
 
 export function SignUpForm() {
+  const search = useSearch({ strict: false })
   const [nickname, setNickname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ nickname?: string; email?: string; password?: string }>({})
-  const [notice, setNotice] = useState('')
+  const action = useAuthAction()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const nextErrors = {
-      nickname: isValidNickname(nickname) ? undefined : 'Никнейм: 3–20 букв, цифр или _.',
+      nickname: isValidNickname(nickname) ? undefined : 'Ник должен быть от 2 до 24 символов.',
       email: isValidEmail(email) ? undefined : 'Введи корректную электронную почту.',
-      password: isValidPassword(password) ? undefined : 'Пароль должен содержать не менее 8 символов.',
+      password: isValidPassword(password) ? undefined : 'Пароль должен содержать от 8 до 72 символов.',
     }
     setErrors(nextErrors)
-    setNotice(Object.values(nextErrors).some(Boolean) ? '' : 'Регистрация пока недоступна: сервер авторизации ещё не подключён.')
+    if (!Object.values(nextErrors).some(Boolean)) void action.submit('/auth/register', { nickname: nickname.trim(), email: email.trim(), password })
   }
 
   return (
@@ -32,11 +34,10 @@ export function SignUpForm() {
           label="Никнейм"
           autoComplete="username"
           placeholder="NeonRiff"
-          maxLength={20}
           value={nickname}
-          hint="3–20 символов: буквы, цифры, _"
+          hint="2–24 символа"
           error={errors.nickname}
-          onChange={(event) => { setNickname(event.target.value); setErrors((current) => ({ ...current, nickname: undefined })); setNotice('') }}
+          onChange={(event) => { setNickname(event.target.value); setErrors((current) => ({ ...current, nickname: undefined })) }}
         />
         <TextField
           label="Электронная почта"
@@ -45,7 +46,7 @@ export function SignUpForm() {
           placeholder="you@example.com"
           value={email}
           error={errors.email}
-          onChange={(event) => { setEmail(event.target.value); setErrors((current) => ({ ...current, email: undefined })); setNotice('') }}
+          onChange={(event) => { setEmail(event.target.value); setErrors((current) => ({ ...current, email: undefined })) }}
         />
         <PasswordField
           label="Пароль"
@@ -54,12 +55,12 @@ export function SignUpForm() {
           value={password}
           hint="Не менее 8 символов."
           error={errors.password}
-          onChange={(event) => { setPassword(event.target.value); setErrors((current) => ({ ...current, password: undefined })); setNotice('') }}
+          onChange={(event) => { setPassword(event.target.value); setErrors((current) => ({ ...current, password: undefined })) }}
         />
-        <Button className={styles.submit} type="submit" fullWidth>Создать аккаунт</Button>
-        {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
+        <Button className={styles.submit} type="submit" fullWidth pending={action.pending}>Создать аккаунт</Button>
+        {action.error ? <p className={styles.notice} role="alert">{action.error}</p> : null}
       </form>
-      <p className={styles.switch}>Уже есть аккаунт? <Link to="/login">Войти</Link></p>
+      <p className={styles.switch}>Уже есть аккаунт? <Link to="/login" search={{ redirect: search.redirect }}>Войти</Link></p>
       <GuestAccess />
     </>
   )

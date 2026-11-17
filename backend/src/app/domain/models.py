@@ -16,6 +16,7 @@ class Player:
     id: UUID
     nickname: str
     account_id: UUID | None
+    session_version: int = 0
 
 
 @dataclass(frozen=True, slots=True)

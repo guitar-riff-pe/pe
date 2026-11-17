@@ -26,6 +26,7 @@
   &:hover { border-color: var(--color-text-secondary); background: var(--color-border-subtle); }
 }
 .guestNote { margin: 18px 0 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.25; }
+.guestForm { display: grid; gap: 16px; }
 .notice { margin: -8px 0 0; color: var(--color-warning); font-size: 13px; }
 .recoveryTitle { font-size: 40px; }
 .recovery .form { gap: 40px; margin-top: 62px; }

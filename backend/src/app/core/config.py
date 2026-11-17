@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,7 +15,12 @@ class Settings(BaseSettings):
 
     app_name: str = "PE API"
     debug: bool = False
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    jwt_secret: SecretStr = Field(min_length=32)
+    jwt_issuer: str = "riff-battle"
+    jwt_audience: str = "riff-battle-api"
+    auth_cookie_name: str = "riff_session"
+    auth_cookie_secure: bool = False
     database_url: str = "postgresql://pe:pe_local_password@localhost:5432/pe"
     redis_url: str = "redis://localhost:6379/0"
     init_db: bool = False
@@ -30,6 +35,28 @@ class Settings(BaseSettings):
     smtp_from: str | None = None
     smtp_username: str | None = None
     smtp_password: str | None = None
+
+    @field_validator("cors_origins")
+    @classmethod
+    def explicit_origins(cls, origins: list[str]) -> list[str]:
+        from urllib.parse import urlsplit
+
+        result = []
+        for origin in origins:
+            parts = urlsplit(origin)
+            if (
+                parts.scheme not in {"http", "https"}
+                or not parts.netloc
+                or "*" in parts.netloc
+                or parts.username
+                or parts.password
+                or parts.path not in {"", "/"}
+                or parts.query
+                or parts.fragment
+            ):
+                raise ValueError("CORS requires explicit HTTP(S) origins without wildcards")
+            result.append(origin.rstrip("/"))
+        return result
 
 
 @lru_cache

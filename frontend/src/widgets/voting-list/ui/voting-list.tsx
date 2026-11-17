@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { SubmissionCard, type Submission } from '@entities/submissions'
 import { PlayRiffButton } from '@features/play-riff'
 import { VoteForRiffAction } from '@features/vote-for-riff'
@@ -9,9 +10,11 @@ type VotingListProps = {
   playingId: string | null
   onPlay: (id: string) => void
   onVote: (id: string) => void
+  disabled?: boolean
+  pendingId?: string
 }
 
-export function VotingList({ submissions, voteId, playingId, onPlay, onVote }: VotingListProps) {
+export const VotingList = memo(function VotingList({ submissions, voteId, playingId, onPlay, onVote, disabled, pendingId }: VotingListProps) {
   return (
     <section className={styles.list} aria-label="Риффы для голосования">
       {submissions.map((submission) => {
@@ -24,9 +27,9 @@ export function VotingList({ submissions, voteId, playingId, onPlay, onVote }: V
           selected={voteState === 'confirmed'}
           stateLabel={playing ? 'Сейчас играет' : voteState === 'confirmed' ? '✓ Твой выбор' : submission.own ? 'За себя голосовать нельзя' : 'Автор скрыт'}
           playAction={<PlayRiffButton name={submission.title} playing={playing} onPlay={() => onPlay(submission.id)} compactOnMobile />}
-          voteAction={<VoteForRiffAction state={voteState} onVote={() => onVote(submission.id)} />}
+          voteAction={<VoteForRiffAction state={voteState} disabled={disabled} pending={pendingId === submission.id} onVote={() => onVote(submission.id)} />}
         />
       })}
     </section>
   )
-}
+})
