@@ -1,0 +1,8 @@
+@use '@mixins' as mixins;
+
+.layout { display: flex; min-height: 100vh; min-height: 100dvh; flex-direction: column; }
+.content { flex: 1; min-width: 0; }
+
+@include mixins.mobile {
+  .layout { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+}

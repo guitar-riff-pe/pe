@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { RoomsPage } from '@pages/rooms'
 import { routeTree } from './routeTree.gen'
+import { SiteLayout } from './layouts/site-layout'
 
 declare global { interface Window { __roomFlowNavigate?: (href: string) => Promise<void> } }
 
@@ -15,7 +16,7 @@ function FlowRoot() {
     window.__roomFlowNavigate = href => router.navigate({ href })
     return () => { delete window.__roomFlowNavigate }
   }, [router])
-  return <Outlet />
+  return <SiteLayout><Outlet /></SiteLayout>
 }
 
 function LiveRooms() {

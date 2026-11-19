@@ -80,7 +80,7 @@
   .step { gap: 14px; }
 }
 @include mixins.mobile {
-  .page { width: calc(100% - 40px); padding: 38px 0 118px; }
+  .page { width: calc(100% - 40px); padding: 38px 0 46px; }
   .hero { display: block; min-height: 0; }
   .eyebrow { display: none; }
   .hero h1 { font-size: clamp(36px, 10vw, 46px); line-height: 1.16; }

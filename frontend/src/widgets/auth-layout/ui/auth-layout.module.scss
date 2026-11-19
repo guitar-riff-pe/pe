@@ -4,7 +4,6 @@
   display: grid;
   width: min(100% - 80px, 1360px);
   max-width: none;
-  min-height: calc(100vh - 80px);
   grid-template-columns: minmax(0, 1fr) minmax(440px, 506px);
   align-items: start;
   gap: 8%;
@@ -28,7 +27,7 @@
 }
 
 @include mixins.mobile {
-  .layout { display: block; width: calc(100% - 40px); min-height: calc(100vh - 70px); padding: 36px 0 90px; }
+  .layout { display: block; width: calc(100% - 40px); padding: 36px 0 36px; }
   .hero { display: none; }
   .card { min-height: 0; padding: 0; border: 0; background: transparent; }
   .centered { padding-top: 52px; }

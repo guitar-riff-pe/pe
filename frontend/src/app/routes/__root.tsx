@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import stylesUrl from '../styles/global.scss?url'
+import { SiteLayout } from '../layouts/site-layout'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -20,7 +21,7 @@ function Root() {
   return (
     <html lang="ru">
       <head><HeadContent /></head>
-      <body><Outlet /><Scripts /></body>
+      <body><SiteLayout><Outlet /></SiteLayout><Scripts /></body>
     </html>
   )
 }

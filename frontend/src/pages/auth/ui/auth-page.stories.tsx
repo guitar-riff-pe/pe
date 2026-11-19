@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/tanstack-react'
 import { createRootRoute, createRoute } from '@tanstack/react-router'
-import { SiteHeader } from '@widgets/site-header'
 import { AuthPage } from './auth-page'
 
 const root = createRootRoute()
 const login = createRoute({ getParentRoute: () => root, path: '/login' })
-root.addChildren([login, createRoute({ getParentRoute: () => root, path: '/rooms', component: () => <><SiteHeader /><main><h1>Комнаты</h1></main></> })])
+root.addChildren([login, createRoute({ getParentRoute: () => root, path: '/rooms', component: () => <main><h1>Комнаты</h1></main> })])
 
 const meta = {
   title: 'Pages/Auth',

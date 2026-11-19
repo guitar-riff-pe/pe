@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
 import { RiffPreview } from '@widgets/riff-preview'
-import { SiteHeader } from '@widgets/site-header'
 import { Surface } from '@shared/ui'
 import { JoinRoomForm } from '@features/join-room'
 import styles from './home-page.module.scss'
@@ -13,8 +12,6 @@ const steps = [
 
 export function HomePage() {
   return (
-    <>
-      <SiteHeader />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="home-title">
           <div className={styles.heroCopy}>
@@ -46,6 +43,5 @@ export function HomePage() {
           ))}
         </section>
       </main>
-    </>
   )
 }

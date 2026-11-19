@@ -6,7 +6,6 @@ import { roundKey, type RoundData, type ComposingRound } from '@entities/rounds'
 import { useRoundSession, RoundSessionStatus, RoundConnectionStatus } from '@features/follow-round'
 import { BattleProgress } from '@widgets/battle-progress'
 import { RiffEditor } from '@widgets/riff-editor'
-import { SiteHeader } from '@widgets/site-header'
 import { Button } from '@shared/ui'
 import { draftKey, formatCountdown, readDraft, type RiffDraft } from '../model/composing'
 import { readRoundDraft, roundDraftKey } from '../model/round-draft'
@@ -24,9 +23,9 @@ export function CreateRiffPage({ roundId }: { roundId?: string }) {
 
 function LiveComposing({ roundId }: { roundId: string }) {
   const state = useRoundSession(roundId, 'composing')
-  if (!state.round) return <><SiteHeader /><main className={styles.page}><BattleProgress stage={2} />
+  if (!state.round) return <main className={styles.page}><BattleProgress stage={2} />
     <RoundSessionStatus state={state} returnTo={`/rooms/compose?roundId=${encodeURIComponent(roundId)}`} />
-  </main></>
+  </main>
   return <ClientOnly fallback={<p role="status">Загружаем черновик…</p>}>
     <LiveWorkspace key={`${state.session.data!.id}:${roundId}`} round={state.round} playerId={state.session.data!.id} connectionStatus={<RoundConnectionStatus state={state} />} />
   </ClientOnly>
@@ -51,9 +50,9 @@ function LiveWorkspace({ round, playerId, connectionStatus }: { round: Composing
     await queries.cancelQueries({ queryKey: roundKey(round.id) })
     queries.setQueryData<RoundData>(roundKey(round.id), previous => previous ? { ...previous, own_riff: saved } : previous)
   }, [round.id, queries])
-  if (initial.error) return <><SiteHeader /><main className={styles.page}><BattleProgress stage={2} />
+  if (initial.error) return <main className={styles.page}><BattleProgress stage={2} />
     <p role="alert">{initial.error}</p><Link to="/rooms/lobby" search={{ roomId: round.room_id, stay: true }}>В комнату →</Link>
-  </main></>
+  </main>
   return <CreateRiffWorkspace round={round} initialDraft={initial.draft} onSave={submit} storageKey={storageKey} connectionStatus={connectionStatus} />
 }
 
@@ -74,7 +73,7 @@ export function CreateRiffWorkspace({ round, initialDraft = emptyDraft, onSave, 
   const loopTitle = round?.loop_title ?? localRound.loopTitle
   const loopUrl = round?.loop_url ?? localRound.loopUrl
   const settings = useMemo(() => ({ bars, bpm, loopTitle, loopUrl }), [bars, bpm, loopTitle, loopUrl])
-  return <><SiteHeader /><main className={styles.page}>
+  return <main className={styles.page}>
     <BattleProgress stage={2} />
     {connectionStatus}
     <header className={styles.intro}>
@@ -95,5 +94,5 @@ export function CreateRiffWorkspace({ round, initialDraft = emptyDraft, onSave, 
       </Button>
     </footer>
     {round ? <Link className={styles.back} to="/rooms/lobby" search={{ roomId: round.room_id, stay: true }}>← В комнату</Link> : <Link className={styles.back} to="/rooms">← К комнатам</Link>}
-  </main></>
+  </main>
 }

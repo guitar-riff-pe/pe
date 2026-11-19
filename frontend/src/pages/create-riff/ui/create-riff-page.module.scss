@@ -19,7 +19,7 @@
 .actions a { color: var(--color-text); }
 
 @include mixins.mobile {
-  .page { width: calc(100% - 32px); padding: 20px 0 110px; }
+  .page { width: calc(100% - 32px); padding: 20px 0 38px; }
   .intro { flex-direction: column; gap: 16px; margin-bottom: 24px; }
   .intro h1 { font-size: 28px; }
   .intro .timer { font-size: 24px; }

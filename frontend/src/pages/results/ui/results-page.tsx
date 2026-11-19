@@ -8,7 +8,6 @@ import { useSession } from '@entities/sessions'
 import { useRoundSession, RoundSessionStatus, RoundConnectionStatus } from '@features/follow-round'
 import { useRoundPlayer } from '@features/play-riff'
 import { Button, Surface } from '@shared/ui'
-import { SiteHeader } from '@widgets/site-header'
 import { BattleProgress } from '@widgets/battle-progress'
 import { ResultsBoard } from '@widgets/results-board'
 import { rankRiffs } from '../model/rank-riffs'
@@ -16,11 +15,11 @@ import styles from './results-page.module.scss'
 
 export function ResultsPage({ roundId }: { roundId?: string }) {
   const state = useRoundSession(roundId, 'results')
-  return <><SiteHeader /><main className={styles.page}><BattleProgress stage={4} />
+  return <main className={styles.page}><BattleProgress stage={4} />
     {state.round && <RoundConnectionStatus state={state} />}
     {state.round ? <LiveResults key={state.round.id} round={state.round} /> :
       <RoundSessionStatus state={state} returnTo={`/rooms/results${roundId ? `?roundId=${encodeURIComponent(roundId)}` : ''}`} />}
-  </main></>
+  </main>
 }
 
 function LiveResults({ round }: { round: RoundData }) {

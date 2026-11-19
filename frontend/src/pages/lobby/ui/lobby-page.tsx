@@ -8,7 +8,6 @@ import { roundPath } from '@entities/rounds'
 import { Button, Surface } from '@shared/ui'
 import { LobbySidebar } from '@widgets/lobby-sidebar'
 import { BattleProgress } from '@widgets/battle-progress'
-import { SiteHeader } from '@widgets/site-header'
 import styles from './lobby-page.module.scss'
 
 export function LobbyPage({ roomId, stay = false }: { roomId?: string; stay?: boolean }) {
@@ -41,7 +40,7 @@ export function LobbyPage({ roomId, stay = false }: { roomId?: string; stay?: bo
   if (room && session.data && !error) return <LobbyPageView room={toLobbyRoom(room, session.data.id)} visibility={room.visibility}
     onStart={() => start.mutate()} starting={start.isPending} onLeave={() => leave.mutate()} leaving={leave.isPending}
     error={start.submittedAt > leave.submittedAt ? start.error?.message : leave.error?.message} stage={room.stage} roundId={room.current_round_id} />
-  return <><SiteHeader /><main className={styles.page}><BattleProgress stage={1} /><h1>Лобби</h1>
+  return <main className={styles.page}><BattleProgress stage={1} /><h1>Лобби</h1>
     <Surface>{loading ? <p role="status">Загружаем комнату…</p> : !session.data && !session.error ? <>
       <p>Войди или продолжи гостем, чтобы открыть комнату.</p>
       <Link to="/login" search={{ redirect: `/rooms/lobby${roomId ? `?roomId=${encodeURIComponent(roomId)}` : ''}` }}>Перейти ко входу →</Link>
@@ -49,7 +48,7 @@ export function LobbyPage({ roomId, stay = false }: { roomId?: string; stay?: bo
       : <p>Ты пока не состоишь в комнате.</p>}
       <p><Link to="/rooms">К списку комнат →</Link></p>
     </Surface>
-  </main></>
+  </main>
 }
 
 export function LobbyPageView({ room, visibility = 'public', onStart, onLeave, starting, leaving, error, stage = 'lobby', roundId }: {
@@ -58,8 +57,6 @@ export function LobbyPageView({ room, visibility = 'public', onStart, onLeave, s
 }) {
   const playersCount = room.participants.filter(participant => participant.role !== 'empty').length
   return (
-    <>
-      <SiteHeader />
       <main className={styles.page}>
         <header className={styles.intro}>
           <p className={styles.eyebrow}>Комната {room.code}</p>
@@ -78,6 +75,5 @@ export function LobbyPageView({ room, visibility = 'public', onStart, onLeave, s
         </div>
         <Button className={styles.leave} variant="ghost" pending={leaving} disabled={!onLeave || starting} onClick={onLeave}>Выйти из комнаты</Button>
       </main>
-    </>
   )
 }

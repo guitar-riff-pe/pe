@@ -1,0 +1,21 @@
+@use '@mixins' as mixins;
+
+.footer { border-top: 1px solid var(--color-border-subtle); color: var(--color-text-secondary); font-size: 13px; }
+.inner { display: flex; width: min(100% - 80px, 1440px); min-height: 72px; align-items: center; justify-content: space-between; gap: 16px; margin-inline: auto; }
+.mobileNav { display: none; }
+
+@include mixins.mobile {
+  .inner { width: calc(100% - 40px); flex-wrap: wrap; padding-block: 20px; }
+  .mobileNav {
+    position: fixed;
+    z-index: 10;
+    inset: auto 0 0;
+    display: flex;
+    min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid var(--color-border-subtle);
+    background: var(--color-surface);
+  }
+}

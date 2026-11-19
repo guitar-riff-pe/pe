@@ -13,6 +13,5 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 export const OnRoomsPage: Story = { parameters: { tanstack: { router: { path: '/rooms' } } } }
 export const AuthMobile: Story = {
-  args: { mobileNavigation: false },
   globals: { viewport: { value: 'mobile2', isRotated: false } },
 }

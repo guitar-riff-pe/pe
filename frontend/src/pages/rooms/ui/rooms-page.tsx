@@ -6,7 +6,6 @@ import { JoinRoomForm } from '@features/join-room'
 import type { RoomFiltersValue } from '@features/filter-rooms'
 import { Button, Surface } from '@shared/ui'
 import { PublicRooms } from '@widgets/public-rooms'
-import { SiteHeader } from '@widgets/site-header'
 import styles from './rooms-page.module.scss'
 
 type FiltersProps = { filters?: RoomFiltersValue; onFiltersChange?: (value: RoomFiltersValue) => void }
@@ -23,8 +22,6 @@ export function RoomsPageView({ rooms, initialCode, loading, error, onRetry, cur
   rooms: Room[]; initialCode?: string; loading?: boolean; error?: string; onRetry?: () => void; currentRoom?: RoomRecord | null
 } & FiltersProps) {
   return (
-    <div className={styles.shell}>
-      <SiteHeader />
       <main className={styles.page}>
         <div className={styles.intro}>
           <div>
@@ -45,6 +42,5 @@ export function RoomsPageView({ rooms, initialCode, loading, error, onRetry, cur
           <JoinRoomForm key={initialCode} initialCode={initialCode} />
         </details>
       </main>
-    </div>
   )
 }

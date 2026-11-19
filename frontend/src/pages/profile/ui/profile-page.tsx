@@ -8,7 +8,6 @@ import { sessionQueryKey, useSession, type SessionPlayer } from '@entities/sessi
 import { Button, Surface } from '@shared/ui'
 import { ProfileHistory } from '@widgets/profile-history'
 import { ProfileRhythm } from '@widgets/profile-rhythm'
-import { ProfileShell } from '@widgets/profile-shell'
 import styles from './profile-page.module.scss'
 
 export function ProfilePage() {
@@ -30,12 +29,12 @@ export function ProfilePage() {
     error={save.error?.message} resetError={save.reset} />
   const loading = session.isPending || (session.data?.kind === 'account' && profile.isPending)
   const error = session.error ?? (session.data?.kind === 'account' ? profile.error : null)
-  return <ProfileShell><main className={styles.page}><h1>Личный кабинет</h1><Surface>
+  return <main className={styles.page}><h1>Личный кабинет</h1><Surface>
     {loading ? <p role="status">Загружаем профиль…</p> : error ? <><p role="alert">{error.message}</p>
       <Button variant="secondary" onClick={() => { void session.refetch(); void profile.refetch() }}>Попробовать снова</Button></> :
       session.data?.kind === 'guest' ? <><p>Статистика и история доступны зарегистрированным игрокам.</p><Link to="/register" search={{ redirect: '/profile' }}>Создать аккаунт →</Link></> :
       <><p>Войди, чтобы открыть свой профиль.</p><Link to="/login" search={{ redirect: '/profile' }}>Перейти ко входу →</Link></>}
-  </Surface></main></ProfileShell>
+  </Surface></main>
 }
 
 type ProfilePageViewProps = {
@@ -46,7 +45,7 @@ export function ProfilePageView({ profile, battles, bestRound, weekStarts, onSav
   const [tab, setTab] = useState<'overview' | 'history'>('overview')
   const [editing, setEditing] = useState(false)
 
-  return <ProfileShell>
+  return <>
     <main className={styles.page}>
       <div className={styles.topline}><span>Личный кабинет</span><Link to="/rooms/create">Новый баттл <span aria-hidden="true">→</span></Link></div>
       <div className={styles.identityRow}>
@@ -67,5 +66,5 @@ export function ProfilePageView({ profile, battles, bestRound, weekStarts, onSav
       <ProfileHistory battles={battles} expanded={tab === 'history'} onToggle={() => setTab(tab === 'overview' ? 'history' : 'overview')} />
     </main>
     {editing ? <EditProfileDialog name={profile.name} handle={profile.handle} onClose={() => setEditing(false)} pending={pending} error={error} onSave={(name, handle) => { void onSave(name, handle).then(() => setEditing(false)).catch(() => {}) }} /> : null}
-  </ProfileShell>
+  </>
 }

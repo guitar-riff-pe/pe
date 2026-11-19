@@ -4,7 +4,6 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { currentRoomOptions } from '@entities/rooms'
 import { useSession } from '@entities/sessions'
-import { SiteHeader } from '@widgets/site-header'
 import { Button, Surface } from '@shared/ui'
 import styles from './create-room-page.module.scss'
 
@@ -29,8 +28,6 @@ export function CreateRoomPage() {
 
 export function CreateRoomPageView({ children }: { children?: ReactNode }) {
   return (
-    <>
-      <SiteHeader />
       <main className={styles.page}>
         <header className={styles.intro}>
           <p className={styles.eyebrow}>Твой баттл</p>
@@ -49,6 +46,5 @@ export function CreateRoomPageView({ children }: { children?: ReactNode }) {
           </Surface>
         </div>
       </main>
-    </>
   )
 }

@@ -7,18 +7,17 @@ import { useRoundSession, RoundSessionStatus, RoundConnectionStatus } from '@fea
 import { useRoundPlayer } from '@features/play-riff'
 import { countdownLabel, useServerDeadline } from '@shared/lib/countdown'
 import { Countdown, Surface } from '@shared/ui'
-import { SiteHeader } from '@widgets/site-header'
 import { BattleProgress } from '@widgets/battle-progress'
 import { VotingList } from '@widgets/voting-list'
 import styles from './voting-page.module.scss'
 
 export function VotingPage({ roundId }: { roundId?: string }) {
   const state = useRoundSession(roundId, 'voting')
-  return <><SiteHeader /><main className={styles.page}><BattleProgress stage={3} />
+  return <main className={styles.page}><BattleProgress stage={3} />
     {state.round && <RoundConnectionStatus state={state} />}
     {state.round ? <LiveVoting key={state.round.id} round={state.round} /> :
       <RoundSessionStatus state={state} returnTo={`/rooms/vote${roundId ? `?roundId=${encodeURIComponent(roundId)}` : ''}`} />}
-  </main></>
+  </main>
 }
 
 function LiveVoting({ round }: { round: RoundData }) {
