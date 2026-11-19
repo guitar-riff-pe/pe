@@ -1,9 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute } from '@tanstack/react-router'
 import { RoomsPage } from '@pages/rooms'
-import { parseRoomSearch } from '@features/filter-rooms'
 
-export const Route = createFileRoute('/rooms')({
-  validateSearch: parseRoomSearch,
+export const Route = createLazyFileRoute('/rooms')({
   component: RoomsRoute,
 })
 
