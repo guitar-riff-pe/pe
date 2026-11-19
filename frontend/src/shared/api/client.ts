@@ -1,4 +1,5 @@
 import { createIsomorphicFn } from '@tanstack/react-start'
+import axios, { AxiosHeaders, type AxiosRequestConfig } from 'axios'
 
 const publicApiUrl = import.meta.env.VITE_API_URL?.trim() || undefined
 const getApiUrl = createIsomorphicFn()
@@ -21,19 +22,39 @@ export class ApiError extends Error {
   constructor(public readonly status: number, message: string) { super(message) }
 }
 
-export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const baseUrl = getApiUrl().replace(/\/$/, '')
-  const headers = new Headers(options.headers)
+const client = axios.create({
+  // Use the same transport in SSR and the browser, including fetch's cache policy.
+  adapter: 'fetch',
+  withCredentials: true,
+  fetchOptions: { cache: 'no-store' },
+  responseType: 'json',
+})
+
+export type ApiRequestOptions<D = unknown> = Pick<AxiosRequestConfig<D>, 'method' | 'data' | 'params'> & {
+  headers?: Record<string, string> | AxiosHeaders
+  signal?: AbortSignal
+}
+
+export async function apiRequest<T, D = unknown>(path: string, options: ApiRequestOptions<D> = {}): Promise<T> {
+  const headers = new AxiosHeaders(options.headers)
   const cookies = await incomingCookies()
   if (cookies) headers.set('Cookie', cookies)
-  if (options.body) headers.set('Content-Type', 'application/json')
   if (!['GET', 'HEAD', 'OPTIONS'].includes((options.method ?? 'GET').toUpperCase())) headers.set('X-CSRF-Protection', '1')
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers, credentials: 'include', cache: 'no-store' })
-  if (!response.ok) {
-    const error = await response.json().catch(() => null) as { detail?: unknown } | null
-    throw new ApiError(response.status, typeof error?.detail === 'string' ? error.detail : `Ошибка сервера (${response.status})`)
+  try {
+    const response = await client.request<T>({
+      ...options,
+      baseURL: getApiUrl().replace(/\/$/, ''),
+      url: path,
+      headers,
+    })
+    return response.status === 204 ? undefined as T : response.data
+  } catch (error) {
+    if (axios.isAxiosError<{ detail?: unknown }>(error) && error.response) {
+      const { status, data } = error.response
+      throw new ApiError(status, typeof data?.detail === 'string' ? data.detail : `Ошибка сервера (${status})`)
+    }
+    throw error
   }
-  return response.status === 204 ? undefined as T : response.json() as Promise<T>
 }
 
 export function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> {

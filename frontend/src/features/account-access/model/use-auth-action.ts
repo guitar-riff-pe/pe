@@ -16,7 +16,7 @@ export function useAuthAction() {
     if (pending) return
     setPending(true); setError('')
     try {
-      const { player } = await apiRequest<{ player: SessionPlayer }>(path, { method: 'POST', body: JSON.stringify(payload) })
+      const { player } = await apiRequest<{ player: SessionPlayer }>(path, { method: 'POST', data: payload })
       await updateSession(queryClient, player)
       const redirect = safeReturnTo(search.redirect)
       if (redirect) await navigate({ href: redirect })

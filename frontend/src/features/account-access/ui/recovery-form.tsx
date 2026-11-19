@@ -21,7 +21,7 @@ export function RecoveryForm() {
     setError('')
     setPending(true); setNotice('')
     try {
-      await apiRequest<void>('/auth/password-reset/request', { method: 'POST', body: JSON.stringify({ email: email.trim() }) })
+      await apiRequest<void>('/auth/password-reset/request', { method: 'POST', data: { email: email.trim() } })
       setNotice('Если аккаунт с этой почтой существует, мы отправили ссылку для смены пароля.')
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Не удалось отправить письмо.') }
     finally { setPending(false) }

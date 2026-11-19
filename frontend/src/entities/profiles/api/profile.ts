@@ -11,5 +11,5 @@ export const profileOptions = queryOptions({
 })
 
 export async function updateProfile(name: string, handle: string) {
-  return formatProfile(await apiRequest<ProfileRecord>('/profile/me', { method: 'PATCH', body: JSON.stringify({ name, handle }) }))
+  return formatProfile(await apiRequest<ProfileRecord>('/profile/me', { method: 'PATCH', data: { name, handle } }))
 }

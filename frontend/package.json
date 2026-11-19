@@ -23,9 +23,10 @@
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-ssr-query": "^1.132.0",
     "@tanstack/react-start": "^1.132.0",
+    "axios": "^1.21.1",
+    "konva": "^10.9.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "konva": "^10.9.1",
     "react-konva": "^19.3.2",
     "tone": "^15.1.22"
   },

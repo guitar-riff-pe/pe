@@ -18,7 +18,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
     if (password !== confirmation) { setError('Пароли не совпадают.'); return }
     setPending(true); setError('')
     try {
-      await apiRequest<void>('/auth/password-reset/confirm', { method: 'POST', body: JSON.stringify({ token, password }) })
+      await apiRequest<void>('/auth/password-reset/confirm', { method: 'POST', data: { token, password } })
       setSaved(true)
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Не удалось сменить пароль.') }
     finally { setPending(false) }

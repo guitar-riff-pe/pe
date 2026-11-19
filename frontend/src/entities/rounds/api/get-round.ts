@@ -7,6 +7,6 @@ export function getRound(roundId: string, signal?: AbortSignal) {
 
 export function castVote(roundId: string, riffId: string) {
   return apiRequest<{ riff_id: string }>(`/rounds/${encodeURIComponent(roundId)}/votes`, {
-    method: 'POST', body: JSON.stringify({ riff_id: riffId }),
+    method: 'POST', data: { riff_id: riffId },
   })
 }
