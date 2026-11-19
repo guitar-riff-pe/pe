@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { currentRoomOptions, leaveRoom, ParticipantRow, roomKey, roomOptions, roomsKey, toLobbyRoom, type LobbyRoom } from '@entities/rooms'
 import { useSession } from '@entities/sessions'
 import { roundPath } from '@entities/rounds'
-import { Button, Surface } from '@shared/ui'
+import { Button, ErrorState, Surface } from '@shared/ui'
 import { LobbySidebar } from '@widgets/lobby-sidebar'
 import { BattleProgress } from '@widgets/battle-progress'
 import styles from './lobby-page.module.scss'
@@ -37,6 +37,10 @@ export function LobbyPage({ roomId, stay = false }: { roomId?: string; stay?: bo
 
   const error = detail.error ?? current.error ?? session.error
   const loading = session.isPending || (!!session.data && ((!roomId && current.isPending) || (!!id && detail.isPending)))
+  if (error && !loading) return <main className={styles.page}><ErrorState error={error} onRetry={() => {
+    void session.refetch()
+    if (session.data) { if (id) void detail.refetch(); else void current.refetch() }
+  }} /></main>
   if (room && session.data && !error) return <LobbyPageView room={toLobbyRoom(room, session.data.id)} visibility={room.visibility}
     onStart={() => start.mutate()} starting={start.isPending} onLeave={() => leave.mutate()} leaving={leave.isPending}
     error={start.submittedAt > leave.submittedAt ? start.error?.message : leave.error?.message} stage={room.stage} roundId={room.current_round_id} />
@@ -44,7 +48,7 @@ export function LobbyPage({ roomId, stay = false }: { roomId?: string; stay?: bo
     <Surface>{loading ? <p role="status">Загружаем комнату…</p> : !session.data && !session.error ? <>
       <p>Войди или продолжи гостем, чтобы открыть комнату.</p>
       <Link to="/login" search={{ redirect: `/rooms/lobby${roomId ? `?roomId=${encodeURIComponent(roomId)}` : ''}` }}>Перейти ко входу →</Link>
-    </> : error ? <><p role="alert">{error.message}</p><Button variant="secondary" onClick={() => { void session.refetch(); if (id) void detail.refetch(); else void current.refetch() }}>Попробовать снова</Button></>
+    </>
       : <p>Ты пока не состоишь в комнате.</p>}
       <p><Link to="/rooms">К списку комнат →</Link></p>
     </Surface>

@@ -1,0 +1,15 @@
+@use '@mixins' as mixins;
+
+.state { width: min(100%, 620px); margin-inline: auto; padding: 32px 20px 56px; text-align: center; }
+.cat { display: block; width: min(100%, 240px); height: auto; margin: 0 auto 8px; }
+.eyebrow { margin: 0 0 12px; color: var(--color-danger); font-size: 12px; font-weight: var(--font-weight-bold); letter-spacing: .08em; text-transform: uppercase; }
+.state h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
+.message { max-width: 440px; margin: 20px auto 0; color: var(--color-text-secondary); font-size: 16px; line-height: 1.6; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; margin-top: 28px; }
+.actions a { padding-block: 12px; color: var(--color-text-secondary); font-size: 14px; }
+
+@include mixins.mobile {
+  .state { padding: 16px 0 32px; }
+  .cat { width: 200px; }
+  .actions { flex-direction: column; gap: 8px; }
+}

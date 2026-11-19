@@ -1,5 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import type { ReactNode } from 'react'
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts, useLocation } from '@tanstack/react-router'
+import { ErrorBoundary, ErrorState } from '@shared/ui'
 import stylesUrl from '../styles/global.scss?url'
 import { SiteLayout } from '../layouts/site-layout'
 
@@ -13,15 +15,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [{ rel: 'stylesheet', href: stylesUrl }],
   }),
-  component: Root,
-  notFoundComponent: () => <main><h1>Страница не найдена</h1><a href="/">На главную</a></main>,
+  shellComponent: Root,
+  component: Outlet,
+  notFoundComponent: () => <main><ErrorState error={{ status: 404 }} /></main>,
 })
 
-function Root() {
+function Root({ children }: { children: ReactNode }) {
+  const href = useLocation({ select: location => location.href })
   return (
     <html lang="ru">
       <head><HeadContent /></head>
-      <body><SiteLayout><Outlet /></SiteLayout><Scripts /></body>
+      <body>
+        <ErrorBoundary resetKey={href}>
+          <SiteLayout>{children}</SiteLayout>
+        </ErrorBoundary>
+        <Scripts />
+      </body>
     </html>
   )
 }

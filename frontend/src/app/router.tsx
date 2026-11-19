@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { createRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
 import { routeTree } from './routeTree.gen'
+import { RouteError } from './routing/route-error'
 
 export function getRouter() {
   // A separate client per SSR request prevents sharing cached user data.
@@ -14,6 +15,7 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
+    defaultErrorComponent: RouteError,
   })
   setupRouterSsrQueryIntegration({ router, queryClient })
   return router

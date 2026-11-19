@@ -14,15 +14,17 @@ const runtime = `data:text/javascript,${encodeURIComponent(`
   export const createIsomorphicFn = () => ({ server: fn => ({ client: () => fn }) })
 `)}`
 const clientUrl = new URL('../src/shared/api/client.ts', import.meta.url).href
+const errorsUrl = new URL('../src/shared/lib/errors/index.ts', import.meta.url).href
 const hooks = registerHooks({
   resolve(specifier, context, next) {
+    if (specifier === '../lib/errors' && context.parentURL === clientUrl) return { url: errorsUrl, shortCircuit: true }
     if (['@tanstack/react-start', '@tanstack/react-start/server'].includes(specifier)) {
       return { url: runtime, shortCircuit: true }
     }
     return next(specifier, context)
   },
   load(url, context, next) {
-    if (url !== clientUrl) return next(url, context)
+    if (url !== clientUrl && url !== errorsUrl) return next(url, context)
     const source = readFileSync(new URL(url), 'utf8').replace('import.meta.env', '({})')
     return { format: 'module', shortCircuit: true, source: ts.transpileModule(source, {
       compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
@@ -31,9 +33,12 @@ const hooks = registerHooks({
 })
 const { context } = await import(runtime)
 const { apiRequest, apiGet, ApiError } = await import(clientUrl)
+const { getErrorDetails } = await import(errorsUrl)
 const oldUrl = process.env.API_INTERNAL_URL
 const server = createServer(async (req, res) => {
   if (req.url === '/api/v1/slow') return
+  if (req.url === '/api/v1/disconnected') { req.socket.destroy(); return }
+  if (req.url === '/api/v1/english-error') { res.writeHead(403).end('{"detail":"Forbidden"}'); return }
   if (req.url === '/api/v1/empty') { res.writeHead(204).end(); return }
   if (req.url === '/api/v1/unauthorized') {
     res.writeHead(401, { 'Content-Type': 'application/json' }).end('{"detail":"Войдите"}')
@@ -78,7 +83,28 @@ test('concurrent SSR requests do not share cookies or custom headers', async () 
 test('204 returns undefined and HTTP failures preserve the ApiError contract', async () => {
   assert.equal(await apiRequest('/empty', { method: 'DELETE' }), undefined)
   await assert.rejects(apiGet('/unauthorized'), error => error instanceof ApiError && error.status === 401 && error.message === 'Войдите')
-  await assert.rejects(apiGet('/broken'), error => error instanceof ApiError && error.status === 502 && error.message === 'Ошибка сервера (502)')
+  await assert.rejects(apiGet('/broken'), error => error instanceof ApiError && error.status === 502 && error.message === 'На сервере произошла ошибка. Попробуй ещё раз чуть позже.')
+})
+
+test('network and English API failures are localized without losing the cause', async () => {
+  await assert.rejects(apiGet('/disconnected'), error => error instanceof ApiError && error.status === 0
+    && error.message === 'Не удалось связаться с сервером. Проверьте подключение к интернету и попробуйте ещё раз.'
+    && axios.isAxiosError(error.cause))
+  await assert.rejects(apiGet('/english-error'), error => error instanceof ApiError && error.status === 403 && error.message === 'У тебя нет доступа к этому действию.')
+})
+
+test('classifies fetch, timeout, chunk and HTTP failures without exposing technical details', () => {
+  assert.equal(getErrorDetails(new TypeError('Failed to fetch')).kind, 'network')
+  assert.equal(getErrorDetails(new Error('Network Error')).kind, 'network')
+  assert.equal(getErrorDetails(new ApiError(0, 'timeout', { cause: { code: 'ETIMEDOUT' } })).kind, 'timeout')
+  assert.equal(getErrorDetails(new TypeError('Failed to fetch dynamically imported module: /assets/page.js')).kind, 'chunk')
+  for (const [status, kind] of [[401, 'unauthorized'], [403, 'forbidden'], [404, 'not-found'], [429, 'rate-limit'], [503, 'server']]) {
+    assert.equal(getErrorDetails({ status }).kind, kind)
+  }
+  for (const error of [undefined, null, new Error('database password=secret'), { status: 500, message: 'Ошибка SQL: secret' }]) {
+    assert.ok(!getErrorDetails(error).message.includes('secret'))
+  }
+  assert.equal(getErrorDetails({ status: 422, message: 'Название уже занято' }).message, 'Название уже занято')
 })
 
 test('AbortSignal cancels an active request without converting cancellation into ApiError', async () => {

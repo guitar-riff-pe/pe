@@ -5,7 +5,7 @@ import { BestRoundCard, ProfileIdentity, ProfileStats, profileKey, profileOption
 import { EditProfileDialog } from '@features/edit-profile'
 import { roomsKey } from '@entities/rooms'
 import { sessionQueryKey, useSession, type SessionPlayer } from '@entities/sessions'
-import { Button, Surface } from '@shared/ui'
+import { Button, ErrorState, Surface } from '@shared/ui'
 import { ProfileHistory } from '@widgets/profile-history'
 import { ProfileRhythm } from '@widgets/profile-rhythm'
 import styles from './profile-page.module.scss'
@@ -29,9 +29,12 @@ export function ProfilePage() {
     error={save.error?.message} resetError={save.reset} />
   const loading = session.isPending || (session.data?.kind === 'account' && profile.isPending)
   const error = session.error ?? (session.data?.kind === 'account' ? profile.error : null)
+  if (error && !loading) return <main className={styles.page}><ErrorState error={error} onRetry={() => {
+    void session.refetch()
+    if (session.data?.kind === 'account') void profile.refetch()
+  }} /></main>
   return <main className={styles.page}><h1>Личный кабинет</h1><Surface>
-    {loading ? <p role="status">Загружаем профиль…</p> : error ? <><p role="alert">{error.message}</p>
-      <Button variant="secondary" onClick={() => { void session.refetch(); void profile.refetch() }}>Попробовать снова</Button></> :
+    {loading ? <p role="status">Загружаем профиль…</p> :
       session.data?.kind === 'guest' ? <><p>Статистика и история доступны зарегистрированным игрокам.</p><Link to="/register" search={{ redirect: '/profile' }}>Создать аккаунт →</Link></> :
       <><p>Войди, чтобы открыть свой профиль.</p><Link to="/login" search={{ redirect: '/profile' }}>Перейти ко входу →</Link></>}
   </Surface></main>

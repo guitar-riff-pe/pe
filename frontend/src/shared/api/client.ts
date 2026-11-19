@@ -1,5 +1,6 @@
 import { createIsomorphicFn } from '@tanstack/react-start'
 import axios, { AxiosHeaders, type AxiosRequestConfig } from 'axios'
+import { getErrorMessage } from '../lib/errors'
 
 const publicApiUrl = import.meta.env.VITE_API_URL?.trim() || undefined
 const getApiUrl = createIsomorphicFn()
@@ -19,7 +20,10 @@ const incomingCookies = createIsomorphicFn()
   .client(() => undefined)
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) { super(message) }
+  constructor(public readonly status: number, message: string, options?: ErrorOptions) {
+    super(message, options)
+    this.name = 'ApiError'
+  }
 }
 
 const client = axios.create({
@@ -49,9 +53,14 @@ export async function apiRequest<T, D = unknown>(path: string, options: ApiReque
     })
     return response.status === 204 ? undefined as T : response.data
   } catch (error) {
+    if (axios.isCancel(error)) throw error
     if (axios.isAxiosError<{ detail?: unknown }>(error) && error.response) {
       const { status, data } = error.response
-      throw new ApiError(status, typeof data?.detail === 'string' ? data.detail : `Ошибка сервера (${status})`)
+      const message = getErrorMessage({ status, message: typeof data?.detail === 'string' ? data.detail : undefined })
+      throw new ApiError(status, message, { cause: error })
+    }
+    if (axios.isAxiosError(error) && !error.response) {
+      throw new ApiError(0, getErrorMessage(error), { cause: error })
     }
     throw error
   }

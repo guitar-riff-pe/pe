@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { currentRoomOptions } from '@entities/rooms'
 import { useSession } from '@entities/sessions'
-import { Button, Surface } from '@shared/ui'
+import { ErrorState, Surface } from '@shared/ui'
 import styles from './create-room-page.module.scss'
 
 const rules = [
@@ -17,11 +17,14 @@ const rules = [
 export function CreateRoomPage() {
   const session = useSession()
   const current = useQuery({ ...currentRoomOptions, enabled: !!session.data })
+  const error = session.error ?? current.error
+  if (error) return <main className={styles.page}><ErrorState error={error} onRetry={() => {
+    void session.refetch()
+    if (session.data) void current.refetch()
+  }} /></main>
   let content: ReactNode
   if (session.isPending || (session.data && current.isPending)) content = <Surface><p role="status">Проверяем текущую комнату…</p></Surface>
-  else if (session.error) content = <Surface><p role="alert">{session.error.message}</p><Button variant="secondary" onClick={() => void session.refetch()}>Попробовать снова</Button></Surface>
   else if (!session.data) content = <Surface><p>Войди или продолжи гостем, чтобы создать комнату.</p><Link to="/login" search={{ redirect: '/rooms/create' }}>Перейти ко входу →</Link></Surface>
-  else if (current.error) content = <Surface><p role="alert">{current.error.message}</p><Button variant="secondary" onClick={() => void current.refetch()}>Попробовать снова</Button></Surface>
   else if (current.data) content = <Surface><p>Ты уже в комнате <strong>{current.data.name}</strong>. Сначала выйди из неё, чтобы создать другую.</p><Link to="/rooms/lobby" search={{ roomId: current.data.id, stay: true }}>Вернуться в комнату →</Link></Surface>
   return <CreateRoomPageView>{content}</CreateRoomPageView>
 }

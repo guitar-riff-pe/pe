@@ -13,5 +13,5 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 export const WithHint: Story = { args: { hint: 'Используй адрес для входа в аккаунт.' } }
-export const Invalid: Story = { args: { error: 'Проверь адрес электронной почты.' } }
+export const Invalid: Story = { args: { error: 'Проверьте адрес электронной почты.' } }
 export const Disabled: Story = { args: { disabled: true, value: 'you@example.com' } }

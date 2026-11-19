@@ -4,7 +4,7 @@ import { currentRoomOptions, publicRoomsOptions, type Room, type RoomRecord } fr
 import { useSession } from '@entities/sessions'
 import { JoinRoomForm } from '@features/join-room'
 import type { RoomFiltersValue } from '@features/filter-rooms'
-import { Button, Surface } from '@shared/ui'
+import { Button, ErrorState, Surface } from '@shared/ui'
 import { PublicRooms } from '@widgets/public-rooms'
 import styles from './rooms-page.module.scss'
 
@@ -15,12 +15,15 @@ export function RoomsPage({ code, filters, onFiltersChange }: { code?: string } 
   const rooms = useQuery(publicRoomsOptions)
   const current = useQuery({ ...currentRoomOptions, enabled: !!session.data })
   return <RoomsPageView rooms={rooms.data ?? []} initialCode={code} loading={rooms.isPending}
-    error={rooms.error?.message} onRetry={() => void rooms.refetch()} currentRoom={current.data} filters={filters} onFiltersChange={onFiltersChange} />
+    error={rooms.error ?? undefined} onRetry={() => void rooms.refetch()} currentRoom={current.data} filters={filters} onFiltersChange={onFiltersChange} />
 }
 
 export function RoomsPageView({ rooms, initialCode, loading, error, onRetry, currentRoom, filters, onFiltersChange }: {
-  rooms: Room[]; initialCode?: string; loading?: boolean; error?: string; onRetry?: () => void; currentRoom?: RoomRecord | null
+  rooms: Room[]; initialCode?: string; loading?: boolean; error?: Error | string; onRetry?: () => void; currentRoom?: RoomRecord | null
 } & FiltersProps) {
+  if (error && !loading && rooms.length === 0) return <main className={styles.page}>
+    <ErrorState error={typeof error === 'string' ? { status: 400, message: error } : error} onRetry={onRetry} />
+  </main>
   return (
       <main className={styles.page}>
         <div className={styles.intro}>
@@ -35,7 +38,7 @@ export function RoomsPageView({ rooms, initialCode, loading, error, onRetry, cur
           <p>Твоя комната: <strong>{currentRoom.name}</strong></p>
           <Link to="/rooms/lobby" search={{ roomId: currentRoom.id, stay: true }}>Вернуться в комнату →</Link>
         </Surface>}
-        {error && <Surface className={styles.notice}><p role="alert">{error}</p><Button variant="secondary" onClick={onRetry}>Попробовать снова</Button></Surface>}
+        {error && <Surface className={styles.notice}><p role="alert">{typeof error === 'string' ? error : error.message}</p><Button variant="secondary" onClick={onRetry}>Попробовать снова</Button></Surface>}
         {loading ? <Surface><p role="status">Загружаем комнаты…</p></Surface> : (!error || rooms.length > 0) && <PublicRooms rooms={rooms} filters={filters} onFiltersChange={onFiltersChange} />}
         <details className={styles.join} open={initialCode ? true : undefined} key={initialCode ?? 'code'}>
           <summary>Есть код приватной комнаты? Войти по коду →</summary>

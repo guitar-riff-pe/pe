@@ -137,7 +137,7 @@ export function useRiffPlayback(timing: RiffTiming, options?: { backingUrl?: str
     } catch {
       if (!mounted.current || run.current !== token) return
       stop()
-      setError('Не удалось загрузить звук гитары. Проверь подключение и разрешения браузера, затем попробуй снова.')
+      setError('Не удалось загрузить звук гитары. Проверьте подключение и разрешения браузера, затем попробуйте снова.')
     }
   }, [ready, stop, timing])
 
