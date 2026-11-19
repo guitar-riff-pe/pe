@@ -40,7 +40,7 @@ export function CreateRoomPageView({ children }: { children?: ReactNode }) {
             <h2>Один бит. Равные условия.</h2>
             <ol>
               {rules.map((rule, index) => (
-                <li key={rule}><span>{String(index + 1).padStart(2, '0')}</span>{rule}</li>
+                <li key={rule}><span>{index + 1}.</span>{rule}</li>
               ))}
             </ol>
           </Surface>

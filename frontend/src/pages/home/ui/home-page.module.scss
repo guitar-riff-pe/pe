@@ -53,6 +53,7 @@
 .heroVisual { min-width: 0; }
 .invitation {
   display: grid;
+  margin-top: 56px;
   grid-template-columns: minmax(0, 1fr) minmax(0, 494px);
   align-items: center;
   gap: 32px;
@@ -88,7 +89,7 @@
   .primaryLink { width: 100%; }
   .caption { margin-top: 16px; }
   .heroVisual { display: none; }
-  .invitation { display: block; margin-top: 44px; padding: 20px; }
+  .invitation { display: block; margin-top: 56px; padding: 20px; }
   .invitation h2 { font-size: 18px; }
   .invitationControls { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; }
   .invitationControls > form { grid-template-columns: 1fr; }
